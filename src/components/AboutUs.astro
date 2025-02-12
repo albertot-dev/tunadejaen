@@ -1,0 +1,34 @@
+---
+import Numeros from "./Numeros.astro";
+const numbers = [{ label: "hola", amount: 8 }];
+---
+
+<section class="px-10 lg:px-48 mt-10 lg:mt-40 text-3xl lg:text-6xl font-light">
+  <h1 class="text-center">
+    Desde <strong class="font-bold">1983</strong> llevamos el nombre de <strong
+      class="font-bold">Jaén</strong
+    >, su provincia y su universidad por todo el mundo, siempre a través de la
+    música, colaborando con multitud de <strong class="font-bold"
+      >causas benéficas</strong
+    >.
+  </h1>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 mt-40 gap-10">
+    <div>
+      <img src="tuna-jaen-en-lima.jpg" class="rounded-3xl" />
+    </div>
+    <div>
+      <h1 class="text-4xl font-bold mb-4">Hemos viajado por todo el mundo</h1>
+      <p class="text-xl">
+        Gracias a la generosidad de quienes nos contratan para momentos
+        especiales como bodas, comuniones y otros eventos, podemos seguir
+        llevando nuestra música por todo el mundo. Con cada actuación, no solo
+        compartimos nuestra tradición, sino que también financiamos nuestros
+        viajes, explorando nuevos rincones y llevando la alegría de la tuna a
+        cada destino. Así, cada acorde que tocamos no solo llena de emoción los
+        corazones, sino que nos acerca más a vivir experiencias únicas que
+        enriquecen nuestro arte y nos conectan con el mundo entero.
+      </p>
+    </div>
+  </div>
+</section>

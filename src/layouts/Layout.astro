@@ -1,0 +1,36 @@
+---
+import { ClientRouter } from "astro:transitions";
+import Navbar from "../components/Navbar.astro";
+// Supports weights 100-900
+import "@fontsource-variable/raleway";
+import Footer from "@/components/Footer.astro";
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Tuna Universitaria de Distrito de Jaén" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/png" href="/images/logo.png" />
+
+    <title>{title}</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <Navbar />
+    <slot />
+    <Footer />
+  </body>
+</html>
+
+<style>
+  body {
+    font-family: "Raleway Variable", sans-serif;
+  }
+</style>

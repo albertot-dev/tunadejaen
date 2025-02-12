@@ -1,0 +1,46 @@
+---
+import "@fontsource/space-mono";
+---
+
+<section
+  class="w-full h-[850px] flex items-end relative overflow-hidden"
+  style=""
+>
+  <div class="absolute h-full w-full top-0 left-0">
+    <img
+      src="/header-3.jpg"
+      class="absolute rounded-b-3xl object-cover h-full w-full"
+    />
+  </div>
+  <div
+    class="absolute h-full w-full top-0 left-0 bg-gradient-to-r from-black/60 to-transparent rounded-b-3xl"
+  >
+  </div>
+  <div class="max-w-[1170px] relative w-full px-4 mx-auto text-xl lg:text-6xl">
+    <div class="title-tuna pb-72 flex flex-col gap-2 tracking-widest">
+      <span class="bg-[#008E5C]/80 backdrop-blur-sm text-white w-fit"
+        >la muy ilustre</span
+      >
+      <span class="bg-[#008E5C]/80 backdrop-blur-sm text-white w-fit"
+        >e andariega</span
+      >
+      <span
+        class="bg-[#008E5C]/80 backdrop-blur-sm text-white w-fit text-4xl lg:text-8xl"
+        >TUNA DE JAÉN</span
+      >
+    </div>
+  </div>
+</section>
+<style>
+  @media screen and (min-width: 1280px) {
+    section {
+      mask-image: url(/musica.svg);
+      mask-repeat: no-repeat;
+      mask-size: cover;
+      mask-position: left bottom;
+    }
+  }
+  .title-tuna {
+    font-family: "Space Mono", monospace;
+  }
+</style>

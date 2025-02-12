@@ -1,0 +1,28 @@
+---
+import { CountUp } from "@/components/CountUp";
+import NumerosItem from "@/components/NumerosItem.tsx";
+
+const numbersPalmares = [
+  { label: "primeros premios", amount: 31 },
+  { label: "mejor tuna", amount: 12 },
+  { label: "pandereta", amount: 6 },
+  { label: "tuna más simpática", amount: 0 },
+];
+---
+
+<section class="w-full bg-primary-800 text-white px-10 lg:px-48 py-12 mt-20">
+  <h2 class="text-xl lg:text-4xl font-tomaso text-center text-balance lg:mb-10">
+    Nuestra experiencia es avalada por nuestro palmarés
+  </h2>
+  {
+    (
+      <div class={`grid grid-cols-2 lg:grid-cols-4 gap-y-10`}>
+        {numbersPalmares.map((palmares) => (
+          <NumerosItem title={palmares.label}>
+            <CountUp initial={0} final={palmares.amount} client:load />
+          </NumerosItem>
+        ))}
+      </div>
+    )
+  }
+</section>
