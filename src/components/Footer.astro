@@ -1,40 +1,144 @@
-<section class="w-full mt-40">
-  <img src="/silueta-lunes-santo.png" class="w-full lg:w-1/3 mx-auto" />
-  <div
-    class="bg-[#231F20] grid grid-cols-1 gap-10 lg:grid-cols-5 w-full text-white p-10"
-  >
-    <div class="max-w-3xl flex flex-col justify-center items-center">
-      <div>
-        <img src="/escudo-tuna-blanco.png" class="w-auto h-32" />
+---
+import { contactos, direccion, email, formatPhone } from "@/data/contacto";
+
+const columnas = [
+  {
+    titulo: "La Tuna",
+    links: [
+      { href: "/historia", label: "Historia" },
+      { href: "/lunes-santo", label: "Lunes Santo" },
+      { href: "/aguinaldo", label: "Aguinaldo" },
+      { href: "/ensayos", label: "Ensayos y taller musical" },
+    ],
+  },
+  {
+    titulo: "Descubre",
+    links: [
+      { href: "/archivo", label: "Archivo" },
+      { href: "/prensa", label: "Prensa" },
+      { href: "/agenda", label: "Agenda pública" },
+      { href: "/#palmares", label: "Palmarés" },
+    ],
+  },
+  {
+    titulo: "Servicios",
+    links: [
+      { href: "/#servicios", label: "Bodas" },
+      { href: "/#servicios", label: "Bautizos y comuniones" },
+      { href: "/#servicios", label: "Serenatas y rondas" },
+      { href: "/#contacto", label: "…y mucho más" },
+    ],
+  },
+];
+---
+
+<footer class="mt-40 w-full">
+  <!-- La silueta del Lunes Santo apoyada sobre el footer -->
+  <img
+    src="/silueta-lunes-santo.png"
+    alt=""
+    class="mx-auto block w-full lg:w-1/3"
+    loading="lazy"
+  />
+
+  <div class="relative isolate overflow-hidden bg-[#231F20] text-white">
+    <div
+      class="absolute inset-x-0 top-0 -z-10 h-64 bg-[radial-gradient(ellipse_at_top,rgba(10,191,123,0.18),transparent_70%)]"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="mx-auto max-w-7xl px-4 pt-16 lg:px-8 lg:pt-20">
+      <!-- Marca y llamada a la acción -->
+      <div class="flex flex-col gap-10 border-b border-white/10 pb-14 lg:flex-row lg:items-center lg:justify-between">
+        <div class="flex items-center gap-6">
+          <img
+            src="/escudo-tuna-blanco.png"
+            alt="Escudo de la Tuna Universitaria de Distrito de Jaén"
+            class="h-24 w-24 shrink-0 object-contain lg:h-28 lg:w-28"
+            loading="lazy"
+          />
+          <div>
+            <p class="font-display text-2xl font-bold leading-tight lg:text-3xl">
+              Tuna Universitaria<br />de Distrito de Jaén
+            </p>
+            <p class="mt-2 font-display italic text-primary-400">la muy ilustre e andariega</p>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div class="relative flex h-28 w-48 items-center justify-center" aria-hidden="true">
+            <img src="/40-aniversario.png" alt="" class="absolute max-h-24 w-auto blur-md" loading="lazy" />
+            <img src="/40-aniversario.png" alt="" class="relative max-h-24 w-auto drop-shadow-lg" loading="lazy" />
+          </div>
+          <a
+            href="/#contacto"
+            class="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-7 py-3.5 font-semibold transition hover:-translate-y-0.5 hover:bg-primary-500"
+          >
+            Contrata a la Tuna <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Enlaces y contacto -->
+      <div class="grid grid-cols-2 gap-x-8 gap-y-12 py-14 lg:grid-cols-[1fr_1fr_1fr_1.4fr]">
+        {
+          columnas.map((columna) => (
+            <nav aria-label={columna.titulo}>
+              <h2 class="text-xs font-semibold uppercase tracking-[0.25em] text-primary-400">
+                {columna.titulo}
+              </h2>
+              <ul class="mt-5 space-y-3">
+                {columna.links.map((link) => (
+                  <li>
+                    <a href={link.href} class="text-white/75 transition hover:text-white">
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))
+        }
+
+        <div class="col-span-2 lg:col-span-1">
+          <h2 class="text-xs font-semibold uppercase tracking-[0.25em] text-primary-400">
+            Encuéntranos
+          </h2>
+          <address class="mt-5 space-y-1 not-italic text-white/75">
+            <p class="font-semibold text-white">{direccion.lugar}</p>
+            <p>{direccion.campus}</p>
+            <p>{direccion.despacho}</p>
+            <p>{direccion.ciudad}</p>
+          </address>
+          <a
+            href={`mailto:${email}`}
+            class="mt-5 inline-block font-display text-lg underline decoration-white/30 underline-offset-4 transition hover:decoration-primary-400"
+          >
+            {email}
+          </a>
+          <ul class="mt-4 space-y-1 text-sm text-white/60">
+            {
+              contactos.map((contacto) => (
+                <li>
+                  <a href={`tel:${contacto.phone}`} class="transition hover:text-white">
+                    {contacto.name} · <span class="tabular-nums">{formatPhone(contacto.phone)}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- Pie -->
+      <div class="flex flex-col gap-4 border-t border-white/10 py-8 text-sm text-white/50 sm:flex-row sm:items-center sm:justify-between">
+        <p>© {new Date().getFullYear()} Tuna Universitaria de Distrito de Jaén</p>
+        <p>Hecho con <span class="text-primary-400" aria-label="música">♪</span> en Jaén</p>
+        <a href="#" class="inline-flex items-center gap-2 transition hover:text-white">
+          Volver arriba <span aria-hidden="true">↑</span>
+        </a>
       </div>
     </div>
-    <div class="flex flex-col justify-center">
-      <span>Universidad de Jaén</span>
-      <span>Campus de Las Lagunillas Edf C-2</span>
-      <span>Despacho 206</span>
-      <span>Jaén - España – 23071</span>
-    </div>
-    <div class="flex flex-col justify-center">
-      <a href="#">Ensayos y taller musical</a>
-      <a href="#">Archivo</a>
-      <a href="#">Prensa</a>
-      <a href="#">Agenda pública</a>
-    </div>
-    <div class="flex flex-col justify-center">
-      <h4 class="my-2 text-2xl">Nuestros servicios</h4>
-      <a href="#">Bodas</a>
-      <a href="#">Bautizos</a>
-      <a href="#">Comuniones</a>
-      <a href="#">...y mucho mas</a>
-    </div>
-    <div
-      class="relative flex justify-center items-center h-80 lg:h-auto max-h-40"
-    >
-      <img
-        src="/40-aniversario.png"
-        class="absolute w-auto z-10 max-h-48 drop-shadow-lg"
-      />
-      <img src="/40-aniversario.png" class="absolute w-auto max-h-48 blur-md" />
-    </div>
   </div>
-</section>
+</footer>

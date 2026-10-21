@@ -1,0 +1,124 @@
+---
+import PageHero from "@/components/PageHero.astro";
+import Layout from "@/layouts/Layout.astro";
+import claustroBanda from "@/assets/claustro-banda.jpg";
+
+const instrumentos = [
+  { name: "Guitarra", text: "La base armónica de la tuna. Aprenderás los acordes de nuestro repertorio desde cero." },
+  { name: "Bandurria y laúd", text: "Las cuerdas que ponen la melodía y el punteo a cada canción." },
+  { name: "Pandereta", text: "Ritmo, malabares y mucho arte: la pandereta es todo un espectáculo." },
+  { name: "Voz", text: "Si lo tuyo es cantar, en la tuna siempre hay hueco para una buena voz." },
+];
+
+const pasos = [
+  { title: "Escríbenos", text: "Contacta con nosotros por WhatsApp, teléfono o correo y te contamos cuándo ensayamos." },
+  { title: "Ven a un ensayo", text: "Pásate a conocernos. No hace falta experiencia: aquí se aprende tocando." },
+  { title: "Empieza a rondar", text: "Poco a poco irás aprendiendo el repertorio y las tradiciones de la tuna." },
+];
+---
+
+<Layout
+  title="Ensayos y taller musical · Tuna de Jaén"
+  description="Ensayos y taller musical de la Tuna de Jaén. Aprende guitarra, bandurria, laúd o pandereta y únete a la tuna."
+>
+  <PageHero
+    eyebrow="Ensayos y taller musical"
+    title="¿Te animas a ser tuno?"
+    subtitle="No hace falta saber música: en nuestros ensayos aprenderás a tocar, a cantar y a vivir la tuna desde dentro."
+    image={claustroBanda}
+    imageAlt="La Tuna de Jaén reunida en un patio"
+  />
+
+  <main>
+    <section class="mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-32">
+      <div class="max-w-2xl" data-reveal>
+        <span class="text-sm font-semibold uppercase tracking-[0.25em] text-primary-700"
+          >Taller musical</span
+        >
+        <h2 class="mt-3 font-display text-4xl font-bold leading-tight lg:text-5xl">
+          Elige tu instrumento
+        </h2>
+      </div>
+      <ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          instrumentos.map((instrumento, index) => (
+            <li
+              class="rounded-2xl border border-ink/10 bg-white p-7 transition-colors duration-300 hover:border-primary-600"
+              data-reveal
+              style={`--delay: ${index * 120}ms`}
+            >
+              <span class="font-display text-5xl font-bold text-primary-600/30">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <h3 class="mt-6 font-display text-2xl font-bold">{instrumento.name}</h3>
+              <p class="mt-3 leading-relaxed text-ink/75">{instrumento.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="bg-ink text-white">
+      <div class="mx-auto grid max-w-7xl gap-16 px-4 py-24 lg:grid-cols-2 lg:px-8 lg:py-32">
+        <div data-reveal="left">
+          <span class="text-sm font-semibold uppercase tracking-[0.25em] text-primary-400"
+            >Cómo unirte</span
+          >
+          <h2 class="mt-3 font-display text-4xl font-bold leading-tight lg:text-5xl">
+            Tres pasos para empezar a rondar
+          </h2>
+          <address class="mt-10 rounded-2xl border border-white/15 p-6 not-italic text-white/80">
+            <p class="font-semibold text-white">Dónde encontrarnos</p>
+            <p class="mt-2">Universidad de Jaén · Campus de Las Lagunillas</p>
+            <p>Edificio C-2, despacho 206 · 23071 Jaén</p>
+          </address>
+        </div>
+        <ol class="space-y-10">
+          {
+            pasos.map((paso, index) => (
+              <li class="flex gap-6" data-reveal="right" style={`--delay: ${index * 150}ms`}>
+                <span class="text-outline font-display text-6xl font-bold leading-none text-primary-400">
+                  {index + 1}
+                </span>
+                <div>
+                  <h3 class="font-display text-2xl font-bold">{paso.title}</h3>
+                  <p class="mt-2 text-lg text-white/70">{paso.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-7xl px-4 pt-24 lg:px-8">
+      <div
+        class="flex flex-col items-start justify-between gap-8 rounded-3xl bg-primary-600 p-8 text-white sm:p-12 lg:flex-row lg:items-center"
+        data-reveal="zoom"
+      >
+        <div>
+          <h2 class="font-display text-3xl font-bold lg:text-4xl">¿Hablamos?</h2>
+          <p class="mt-2 text-lg text-white/85">
+            Pregúntanos por los días y el horario de ensayo.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a
+            href="https://wa.me/34640244374"
+            target="_blank"
+            rel="noopener"
+            class="rounded-full bg-white px-6 py-3 font-semibold text-primary-800 transition hover:bg-cream"
+          >
+            WhatsApp
+          </a>
+          <a
+            href="mailto:tunadejaen@gmail.com"
+            class="rounded-full border border-white/50 px-6 py-3 font-semibold transition hover:bg-white/10"
+          >
+            tunadejaen@gmail.com
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

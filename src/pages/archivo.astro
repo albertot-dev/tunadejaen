@@ -1,0 +1,66 @@
+---
+import { Image, getImage } from "astro:assets";
+import Lightbox from "@/components/Lightbox.astro";
+import PageHero from "@/components/PageHero.astro";
+import Layout from "@/layouts/Layout.astro";
+import { archivo } from "@/data/archivo";
+
+// Versión grande de cada foto para el visor a pantalla completa
+const fotos = await Promise.all(
+  archivo.map(async (foto) => ({
+    ...foto,
+    large: (await getImage({ src: foto.src, width: 1800 })).src,
+  }))
+);
+---
+
+<Layout
+  title="Archivo · Tuna de Jaén"
+  description="Archivo fotográfico de la Tuna Universitaria de Distrito de Jaén."
+>
+  <PageHero
+    eyebrow="Archivo"
+    title="Nuestros recuerdos"
+    subtitle="Rondas, viajes, aniversarios y encuentros: un pedacito de nuestra historia en imágenes."
+  />
+
+  <main class="mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-32">
+    <ul class="columns-1 gap-6 sm:columns-2 lg:columns-3">
+      {
+        fotos.map((foto, index) => (
+          <li class="mb-6 break-inside-avoid" data-reveal style={`--delay: ${(index % 3) * 120}ms`}>
+            <button
+              type="button"
+              class="group relative block w-full overflow-hidden rounded-2xl bg-white text-left shadow-sm"
+              data-lightbox={foto.large}
+              data-caption={foto.caption}
+              aria-label={`Ampliar foto: ${foto.caption}`}
+            >
+              <Image
+                src={foto.src}
+                alt={foto.alt}
+                class="h-auto w-full transition duration-700 group-hover:scale-105"
+                widths={[400, 800]}
+                sizes="(min-width: 1024px) 26rem, (min-width: 640px) 45vw, 92vw"
+              />
+              <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 to-transparent p-5 pt-16 text-white opacity-100 transition duration-500 sm:translate-y-4 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100">
+                <span class="block font-display text-xl font-bold">{foto.caption}</span>
+                {foto.credit && <span class="mt-1 block text-sm text-white/70">Foto: {foto.credit}</span>}
+              </span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-12 text-center text-ink/70" data-reveal>
+      ¿Tienes fotos antiguas de la Tuna? Mándanoslas a
+      <a href="mailto:tunadejaen@gmail.com" class="font-semibold text-primary-700 underline-offset-4 hover:underline"
+        >tunadejaen@gmail.com</a
+      >.
+    </p>
+  </main>
+
+  <Lightbox />
+</Layout>
+

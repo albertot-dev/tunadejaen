@@ -1,46 +1,171 @@
 ---
-import "@fontsource/space-mono";
+import { Image } from "astro:assets";
+import headerImage from "@/assets/header-3.jpg";
+
+// Notas musicales flotando sobre la portada: posición, retardo y tamaño
+const notas = [
+  { char: "♪", left: "8%", delay: "0s", size: "2rem", duration: "14s" },
+  { char: "♫", left: "22%", delay: "4s", size: "2.6rem", duration: "17s" },
+  { char: "♩", left: "47%", delay: "2s", size: "1.8rem", duration: "13s" },
+  { char: "♬", left: "66%", delay: "6s", size: "2.8rem", duration: "18s" },
+  { char: "♪", left: "81%", delay: "1s", size: "2.2rem", duration: "15s" },
+  { char: "♫", left: "92%", delay: "8s", size: "1.6rem", duration: "12s" },
+];
 ---
 
-<section
-  class="w-full h-[850px] flex items-end relative overflow-hidden"
-  style=""
->
-  <div class="absolute h-full w-full top-0 left-0">
-    <img
-      src="/header-3.jpg"
-      class="absolute rounded-b-3xl object-cover h-full w-full"
-    />
-  </div>
+<section class="hero relative isolate flex min-h-[100svh] items-end overflow-hidden bg-ink">
+  <Image
+    src={headerImage}
+    alt="La Tuna de Jaén al completo en el patio de un claustro"
+    class="hero-image absolute inset-0 -z-20 h-full w-full object-cover"
+    widths={[800, 1400, 2048]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+  />
   <div
-    class="absolute h-full w-full top-0 left-0 bg-gradient-to-r from-black/60 to-transparent rounded-b-3xl"
+    class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/55 to-black/30"
   >
   </div>
-  <div class="max-w-[1170px] relative w-full px-4 mx-auto text-xl lg:text-6xl">
-    <div class="title-tuna pb-72 flex flex-col gap-2 tracking-widest">
-      <span class="bg-[#008E5C]/80 backdrop-blur-sm text-white w-fit"
-        >la muy ilustre</span
-      >
-      <span class="bg-[#008E5C]/80 backdrop-blur-sm text-white w-fit"
-        >e andariega</span
+
+  <div class="pointer-events-none absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
+    {
+      notas.map((nota) => (
+        <span
+          class="nota absolute bottom-0 text-white/25"
+          style={`left: ${nota.left}; font-size: ${nota.size}; animation-delay: ${nota.delay}; animation-duration: ${nota.duration}`}
+        >
+          {nota.char}
+        </span>
+      ))
+    }
+  </div>
+
+  <div class="mx-auto w-full max-w-7xl px-4 pb-24 pt-40 lg:px-8 lg:pb-32">
+    <h1 class="flex flex-col items-start gap-2 font-display text-white">
+      <span
+        class="ribbon bg-primary-600/90 px-3 py-1 text-xl italic tracking-wide backdrop-blur-sm lg:text-4xl"
+        style="--i: 0">la muy ilustre</span
       >
       <span
-        class="bg-[#008E5C]/80 backdrop-blur-sm text-white w-fit text-4xl lg:text-8xl"
-        >TUNA DE JAÉN</span
+        class="ribbon bg-primary-600/90 px-3 py-1 text-xl italic tracking-wide backdrop-blur-sm lg:text-4xl"
+        style="--i: 1">e andariega</span
       >
+      <span
+        class="ribbon whitespace-nowrap bg-primary-600/90 px-3 py-1 text-[2.6rem] font-bold uppercase tracking-tight backdrop-blur-sm sm:text-6xl lg:text-8xl"
+        style="--i: 2">Tuna de Jaén</span
+      >
+    </h1>
+    <p class="hero-fade mt-8 max-w-xl text-lg text-white/85 lg:text-xl" style="--i: 3">
+      Tuna Universitaria de Distrito de Jaén. Rondando calles, plazas y medio
+      mundo desde 1983.
+    </p>
+    <div class="hero-fade mt-8 flex flex-wrap gap-4" style="--i: 4">
+      <a
+        href="#contacto"
+        class="group relative overflow-hidden rounded-full bg-primary-600 px-7 py-3.5 font-semibold text-white shadow-[0_0_40px_rgba(10,191,123,0.45)] transition hover:-translate-y-0.5 hover:bg-primary-500"
+      >
+        Contrata a la Tuna
+      </a>
+      <a
+        href="#nosotros"
+        class="rounded-full border border-white/60 px-7 py-3.5 font-semibold text-white transition hover:bg-white hover:text-ink"
+      >
+        Conócenos
+      </a>
     </div>
   </div>
+
+  <a
+    href="#nosotros"
+    class="hero-fade absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/70 sm:flex"
+    style="--i: 5"
+    aria-label="Bajar a la siguiente sección"
+  >
+    Desliza
+    <span class="scroll-cue block h-10 w-px bg-white/60"></span>
+  </a>
 </section>
+
 <style>
-  @media screen and (min-width: 1280px) {
-    section {
-      mask-image: url(/musica.svg);
-      mask-repeat: no-repeat;
-      mask-size: cover;
-      mask-position: left bottom;
+  /* Retardo para que la portada se anime justo cuando se abre el telón de la intro */
+  .hero {
+    --intro-delay: 2.4s;
+  }
+  :global(.intro-skip) .hero {
+    --intro-delay: 0.1s;
+  }
+
+  .hero-image {
+    animation: hero-zoom 3.5s cubic-bezier(0.16, 1, 0.3, 1) var(--intro-delay) both;
+  }
+  .ribbon {
+    animation: ribbon-in 1s cubic-bezier(0.76, 0, 0.24, 1) both;
+    animation-delay: calc(var(--intro-delay) + var(--i) * 0.15s);
+  }
+  .hero-fade {
+    animation: fade-up 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--intro-delay) + var(--i) * 0.15s);
+  }
+  .nota {
+    opacity: 0;
+    animation: nota-float linear infinite;
+  }
+  .scroll-cue {
+    transform-origin: top;
+    animation: scroll-cue 2s cubic-bezier(0.76, 0, 0.24, 1) infinite;
+  }
+
+  @keyframes hero-zoom {
+    from {
+      transform: scale(1.25);
+      filter: saturate(0.4);
     }
   }
-  .title-tuna {
-    font-family: "Space Mono", monospace;
+  @keyframes ribbon-in {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
+  @keyframes nota-float {
+    0% {
+      opacity: 0;
+      transform: translateY(0) rotate(0deg);
+    }
+    15% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-90vh) rotate(25deg);
+    }
+  }
+  @keyframes scroll-cue {
+    0% {
+      transform: scaleY(0);
+    }
+    50% {
+      transform: scaleY(1);
+      transform-origin: top;
+    }
+    51% {
+      transform-origin: bottom;
+    }
+    100% {
+      transform: scaleY(0);
+      transform-origin: bottom;
+    }
   }
 </style>

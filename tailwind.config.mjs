@@ -17,6 +17,12 @@ export default {
           900: "#045039",
           950: "#012d21",
         },
+        ink: "#231F20",
+        cream: "#F6F2EA",
+      },
+      fontFamily: {
+        sans: ['"Raleway Variable"', "sans-serif"],
+        display: ['"Fraunces Variable"', "serif"],
       },
     },
   },

@@ -1,0 +1,48 @@
+---
+// Visor de fotos a pantalla completa. Se abre con cualquier botón que tenga
+// data-lightbox="<url grande>" y opcionalmente data-caption="<texto>".
+---
+
+<dialog
+  id="lightbox"
+  class="m-auto max-h-[95vh] max-w-[95vw] bg-transparent p-0 backdrop:bg-ink/95 backdrop:backdrop-blur-sm"
+>
+  <figure class="relative">
+    <img id="lightbox-img" src="" alt="" class="max-h-[85vh] w-auto rounded-xl" />
+    <figcaption id="lightbox-caption" class="mt-4 text-center font-display text-xl text-white"></figcaption>
+    <button
+      id="lightbox-close"
+      type="button"
+      class="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-ink/70 text-2xl text-white backdrop-blur transition hover:bg-ink"
+      aria-label="Cerrar"
+    >
+      ×
+    </button>
+  </figure>
+</dialog>
+
+<script>
+  import { $, $$ } from "@/lib/dom-selector";
+
+  document.addEventListener("astro:page-load", () => {
+    const dialog = $<HTMLDialogElement & HTMLElement>("#lightbox");
+    const img = $<HTMLImageElement>("#lightbox-img");
+    const caption = $("#lightbox-caption");
+    if (!dialog || !img || !caption) return;
+
+    $$("[data-lightbox]").forEach((button) => {
+      button.addEventListener("click", () => {
+        img.src = button.dataset.lightbox!;
+        img.alt = button.querySelector("img")?.alt ?? "";
+        caption.textContent = button.dataset.caption ?? "";
+        dialog.showModal();
+      });
+    });
+
+    $("#lightbox-close")?.addEventListener("click", () => dialog.close());
+    // Cerrar al pulsar fuera de la foto
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+  });
+</script>

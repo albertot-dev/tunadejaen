@@ -1,0 +1,60 @@
+---
+import { contactos, formatPhone } from "@/data/contacto";
+---
+
+<section id="contacto" class="mx-auto max-w-7xl px-4 pt-8 lg:px-8 lg:pt-12">
+  <div
+    data-reveal="zoom"
+    class="grid gap-12 overflow-hidden rounded-3xl bg-primary-600 p-8 text-white shadow-2xl sm:p-12 lg:grid-cols-[1.1fr_1fr] lg:p-16"
+  >
+    <div>
+      <span class="text-sm font-semibold uppercase tracking-[0.25em] text-white/70"
+        >Contacto</span
+      >
+      <h2 class="mt-3 font-display text-4xl font-bold leading-tight lg:text-5xl">
+        ¿Quieres a la Tuna en tu evento?
+      </h2>
+      <p class="mt-6 max-w-md text-lg text-white/85">
+        Escríbenos por WhatsApp, llámanos o mándanos un correo y te contamos
+        disponibilidad sin compromiso.
+      </p>
+      <a
+        href="mailto:tunadejaen@gmail.com"
+        class="mt-8 inline-block break-all font-display text-2xl font-semibold underline decoration-white/40 underline-offset-8 transition hover:decoration-white"
+      >
+        tunadejaen@gmail.com
+      </a>
+    </div>
+
+    <ul class="flex flex-col gap-4 self-center">
+      {
+        contactos.map((contacto) => (
+          <li class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white/10 p-5 backdrop-blur">
+            <div>
+              <p class="font-semibold">{contacto.name}</p>
+              <a href={`tel:${contacto.phone}`} class="text-white/80 hover:text-white">
+                {formatPhone(contacto.phone)}
+              </a>
+            </div>
+            <div class="flex gap-2">
+              <a
+                href={`https://wa.me/34${contacto.phone}`}
+                target="_blank"
+                rel="noopener"
+                class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-primary-800 transition hover:bg-cream"
+              >
+                WhatsApp
+              </a>
+              <a
+                href={`tel:${contacto.phone}`}
+                class="rounded-full border border-white/50 px-4 py-2 text-sm font-semibold transition hover:bg-white/10"
+              >
+                Llamar
+              </a>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

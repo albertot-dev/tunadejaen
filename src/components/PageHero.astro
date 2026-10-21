@@ -1,0 +1,93 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  subtitle?: string;
+  image?: ImageMetadata;
+  imageAlt?: string;
+}
+
+const { eyebrow, title, subtitle, image, imageAlt = "" } = Astro.props;
+---
+
+<section class="page-hero relative isolate overflow-hidden bg-ink text-white">
+  {
+    image && (
+      <>
+        <Image
+          src={image}
+          alt={imageAlt}
+          class="page-hero-image absolute inset-0 -z-20 h-full w-full object-cover"
+          widths={[800, 1400, 2048]}
+          sizes="100vw"
+          loading="eager"
+        />
+        <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/70 to-ink/40" />
+      </>
+    )
+  }
+  <img
+    src="/escudo-tuna-blanco.png"
+    alt=""
+    class="pointer-events-none absolute -right-24 -top-16 -z-10 w-[28rem] max-w-none opacity-[0.05] lg:w-[36rem]"
+  />
+
+  <div class="mx-auto max-w-7xl px-4 pb-20 pt-40 lg:px-8 lg:pb-28 lg:pt-48">
+    <span
+      class="page-hero-fade inline-block text-sm font-semibold uppercase tracking-[0.25em] text-primary-400"
+      style="--i: 0">{eyebrow}</span
+    >
+    <h1
+      class="page-hero-ribbon mt-4 font-display text-5xl font-bold leading-[1.15] sm:text-6xl lg:text-8xl"
+      style="--i: 1"
+    >
+      <span class="bg-primary-600/90 px-3 [-webkit-box-decoration-break:clone] [box-decoration-break:clone]"
+        >{title}</span
+      >
+    </h1>
+    {
+      subtitle && (
+        <p class="page-hero-fade mt-8 max-w-2xl text-lg text-white/80 lg:text-xl" style="--i: 2">
+          {subtitle}
+        </p>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .page-hero-image {
+    animation: hero-zoom 3s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .page-hero-ribbon {
+    animation: ribbon-in 1s cubic-bezier(0.76, 0, 0.24, 1) both;
+    animation-delay: calc(var(--i) * 0.15s);
+  }
+  .page-hero-fade {
+    animation: fade-up 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i) * 0.15s + 0.2s);
+  }
+  @keyframes hero-zoom {
+    from {
+      transform: scale(1.2);
+      filter: saturate(0.4);
+    }
+  }
+  @keyframes ribbon-in {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
+</style>

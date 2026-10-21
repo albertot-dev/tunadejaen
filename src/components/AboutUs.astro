@@ -1,33 +1,40 @@
 ---
-import Numeros from "./Numeros.astro";
-const numbers = [{ label: "hola", amount: 8 }];
+import { Image } from "astro:assets";
+import lima from "@/assets/tuna-jaen-en-lima.jpg";
 ---
 
-<section class="px-10 lg:px-48 mt-10 lg:mt-40 text-3xl lg:text-6xl font-light">
-  <h1 class="text-center">
-    Desde <strong class="font-bold">1983</strong> llevamos el nombre de <strong
-      class="font-bold">Jaén</strong
-    >, su provincia y su universidad por todo el mundo, siempre a través de la
-    música, colaborando con multitud de <strong class="font-bold"
-      >causas benéficas</strong
-    >.
-  </h1>
-
-  <div class="grid grid-cols-1 lg:grid-cols-2 mt-40 gap-10">
-    <div>
-      <img src="tuna-jaen-en-lima.jpg" class="rounded-3xl" />
-    </div>
-    <div>
-      <h1 class="text-4xl font-bold mb-4">Hemos viajado por todo el mundo</h1>
-      <p class="text-xl">
+<section id="viajes" class="mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-32">
+  <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+    <figure class="relative" data-reveal="zoom">
+      <Image
+        src={lima}
+        alt="Tunos de Jaén posando junto a las letras de Lima en la Plaza Mayor"
+        class="aspect-[4/3] w-full rounded-3xl object-cover shadow-2xl"
+        widths={[600, 1000, 1400]}
+        sizes="(min-width: 1024px) 40vw, 92vw"
+      />
+      <figcaption
+        class="absolute -bottom-5 left-6 rounded-full bg-ink px-5 py-2 text-sm text-white shadow-lg"
+      >
+        Plaza Mayor de Lima, Perú
+      </figcaption>
+    </figure>
+    <div data-reveal="right">
+      <span class="text-sm font-semibold uppercase tracking-[0.25em] text-primary-700"
+        >Andariegos</span
+      >
+      <h2 class="mt-3 font-display text-4xl font-bold leading-tight lg:text-5xl">
+        Hemos viajado por todo el mundo
+      </h2>
+      <p class="mt-6 text-lg leading-relaxed text-ink/80">
         Gracias a la generosidad de quienes nos contratan para momentos
         especiales como bodas, comuniones y otros eventos, podemos seguir
-        llevando nuestra música por todo el mundo. Con cada actuación, no solo
-        compartimos nuestra tradición, sino que también financiamos nuestros
-        viajes, explorando nuevos rincones y llevando la alegría de la tuna a
-        cada destino. Así, cada acorde que tocamos no solo llena de emoción los
-        corazones, sino que nos acerca más a vivir experiencias únicas que
-        enriquecen nuestro arte y nos conectan con el mundo entero.
+        llevando nuestra música por todo el mundo.
+      </p>
+      <p class="mt-4 text-lg leading-relaxed text-ink/80">
+        Con cada actuación no solo compartimos nuestra tradición: también
+        financiamos nuestros viajes, explorando nuevos rincones y llevando la
+        alegría de la tuna a cada destino.
       </p>
     </div>
   </div>

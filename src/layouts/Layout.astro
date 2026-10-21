@@ -1,36 +1,114 @@
 ---
 import { ClientRouter } from "astro:transitions";
-import Navbar from "../components/Navbar.astro";
+import Navbar from "@/components/Navbar.astro";
 // Supports weights 100-900
 import "@fontsource-variable/raleway";
+import "@fontsource-variable/fraunces";
+import "@/styles/global.css";
+import EnConstruccion from "@/components/EnConstruccion.astro";
 import Footer from "@/components/Footer.astro";
+import { claveVistaPrevia, enConstruccion } from "@/config";
 interface Props {
   title: string;
+  description?: string;
 }
 
-const { title } = Astro.props;
+const {
+  title,
+  description = "Tuna Universitaria de Distrito de Jaén. Música, tradición y Jaén en el corazón desde 1983.",
+} = Astro.props;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="es" class:list={[enConstruccion && "en-construccion"]}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Tuna Universitaria de Distrito de Jaén" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/png" href="/images/logo.png" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#231F20" />
+    {enConstruccion && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="icon" type="image/png" href="/escudo-tuna-blanco.png" />
 
     <title>{title}</title>
+    <script is:inline>
+      (() => {
+        const markHtml = () => {
+          const html = document.documentElement;
+          html.classList.add("js");
+          // La intro solo se ve una vez por sesión y nunca con movimiento reducido
+          let introSeen = false;
+          try {
+            introSeen = sessionStorage.getItem("intro-visto") === "1";
+          } catch {}
+          if (
+            introSeen ||
+            matchMedia("(prefers-reduced-motion: reduce)").matches
+          ) {
+            html.classList.add("intro-skip");
+          }
+        };
+        markHtml();
+        // El ClientRouter reemplaza los atributos de <html> al navegar
+        document.addEventListener("astro:after-swap", markHtml);
+      })();
+    </script>
+    {
+      enConstruccion && (
+        <script is:inline define:vars={{ clave: claveVistaPrevia }}>
+          // Modo en construcción: ?vista=<clave> desbloquea la web en este
+          // navegador y ?vista=salir la vuelve a bloquear.
+          const STORAGE_KEY = "vista-previa";
+          const url = new URL(location.href);
+          const vista = url.searchParams.get("vista");
+          try {
+            if (vista === "salir") localStorage.removeItem(STORAGE_KEY);
+            else if (vista && vista === clave) localStorage.setItem(STORAGE_KEY, vista);
+          } catch {}
+          if (vista !== null) {
+            url.searchParams.delete("vista");
+            history.replaceState(history.state, "", url);
+          }
+          const unlock = () => {
+            let guardada = null;
+            try {
+              guardada = localStorage.getItem(STORAGE_KEY);
+            } catch {}
+            if (clave && guardada === clave) {
+              document.documentElement.classList.remove("en-construccion");
+              document.documentElement.classList.add("vista-previa");
+            }
+          };
+          unlock();
+          document.addEventListener("astro:after-swap", unlock);
+        </script>
+      )
+    }
+    <slot name="head" />
     <ClientRouter />
   </head>
-  <body>
-    <!-- <Navbar /> -->
+  <body class="bg-cream text-ink antialiased">
+    {
+      enConstruccion && (
+        <>
+          <EnConstruccion />
+          <a
+            id="aviso-vista-previa"
+            href="?vista=salir"
+            data-astro-reload
+            class="fixed bottom-4 left-4 z-[90] items-center gap-2 rounded-full bg-ink/90 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white shadow-lg backdrop-blur transition hover:bg-ink"
+          >
+            <span class="h-2 w-2 animate-pulse rounded-full bg-primary-400" />
+            Vista previa · salir
+          </a>
+        </>
+      )
+    }
+    <Navbar />
     <slot />
     <Footer />
   </body>
 </html>
 
-<style>
-  body {
-    font-family: "Raleway Variable", sans-serif;
-  }
-</style>
+<script>
+  import "@/scripts/motion";
+</script>

@@ -1,0 +1,27 @@
+---
+interface Props {
+  title: string;
+  text: string;
+}
+
+const { title, text } = Astro.props;
+---
+
+<div
+  class="relative overflow-hidden rounded-3xl border border-dashed border-ink/20 bg-white px-6 py-16 text-center sm:px-12"
+  data-reveal
+>
+  <span class="text-5xl text-primary-600" aria-hidden="true">♫</span>
+  <h2 class="mt-4 font-display text-3xl font-bold">{title}</h2>
+  <p class="mx-auto mt-3 max-w-lg text-lg text-ink/70">{text}</p>
+  <div class="mt-8 flex flex-wrap justify-center gap-3">
+    <slot>
+      <a
+        href="/#contacto"
+        class="rounded-full bg-primary-600 px-6 py-3 font-semibold text-white transition hover:bg-primary-500"
+      >
+        Contacta con nosotros
+      </a>
+    </slot>
+  </div>
+</div>

@@ -1,0 +1,49 @@
+---
+const servicios = [
+  {
+    title: "Bodas",
+    text: "La entrada de la novia, el cóctel o la fiesta: ponemos la música a uno de los días más importantes.",
+  },
+  {
+    title: "Bautizos y comuniones",
+    text: "Una celebración familiar con el sabor de siempre y canciones que todos conocen.",
+  },
+  {
+    title: "Serenatas y rondas",
+    text: "Una ronda bajo el balcón, una sorpresa de cumpleaños o un aniversario que no se olvida.",
+  },
+  {
+    title: "Eventos y actos",
+    text: "Actos institucionales, congresos, cenas de empresa… y mucho más.",
+  },
+];
+---
+
+<section id="servicios" class="bg-white">
+  <div class="mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-32">
+    <div class="max-w-2xl" data-reveal>
+      <span class="text-sm font-semibold uppercase tracking-[0.25em] text-primary-700"
+        >Nuestros servicios</span
+      >
+      <h2 class="mt-3 font-display text-4xl font-bold leading-tight lg:text-5xl">
+        Llevamos la tuna a tu celebración
+      </h2>
+    </div>
+    <ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        servicios.map((servicio, index) => (
+          <li class="group flex flex-col rounded-2xl border border-ink/10 bg-cream p-7 transition duration-300 hover:-translate-y-1 hover:border-primary-600 hover:shadow-xl"
+            data-reveal
+            style={`--delay: ${index * 120}ms`}
+          >
+            <span class="font-display text-5xl font-bold text-primary-600/30 transition group-hover:text-primary-600">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <h3 class="mt-6 font-display text-2xl font-bold">{servicio.title}</h3>
+            <p class="mt-3 leading-relaxed text-ink/75">{servicio.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

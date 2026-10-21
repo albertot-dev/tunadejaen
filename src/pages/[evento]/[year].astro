@@ -1,0 +1,24 @@
+---
+// /lunes-santo/2026, /aguinaldo/2025… crónica de una edición concreta
+import type { GetStaticPaths } from "astro";
+import CronicaPage from "@/components/CronicaPage.astro";
+import { eventos } from "@/data/eventos";
+import { getCronicas, getYear } from "@/lib/cronicas";
+
+export const getStaticPaths = (async () => {
+  const paths = await Promise.all(
+    eventos.map(async (evento) => {
+      const cronicas = await getCronicas(evento.slug);
+      return cronicas.map((cronica) => ({
+        params: { evento: evento.slug, year: getYear(cronica) },
+        props: { evento, cronica, cronicas },
+      }));
+    })
+  );
+  return paths.flat();
+}) satisfies GetStaticPaths;
+
+const { evento, cronica, cronicas } = Astro.props;
+---
+
+<CronicaPage evento={evento} cronica={cronica} cronicas={cronicas} />

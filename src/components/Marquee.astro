@@ -1,0 +1,40 @@
+---
+interface Props {
+  items: string[];
+  variant?: "green" | "outline";
+  reverse?: boolean;
+}
+
+const { items, variant = "green", reverse = false } = Astro.props;
+// Se duplica la lista para que el bucle sea continuo
+const loop = [...items, ...items];
+---
+
+<div
+  class:list={[
+    "relative overflow-hidden whitespace-nowrap",
+    variant === "green" && "bg-primary-600 py-5 text-white",
+    variant === "outline" && "py-10 text-primary-700",
+  ]}
+  aria-hidden="true"
+>
+  <div
+    class="animate-marquee flex w-max"
+    style={reverse ? "animation-direction: reverse" : undefined}
+  >
+    {
+      loop.map((item) => (
+        <span
+          class:list={[
+            "flex items-center font-display font-bold uppercase",
+            variant === "green" && "gap-8 pr-8 text-xl tracking-wide sm:text-2xl",
+            variant === "outline" && "text-outline gap-12 pr-12 text-6xl sm:text-8xl lg:text-9xl",
+          ]}
+        >
+          {item}
+          <span class:list={[variant === "green" ? "text-primary-200" : "text-primary-500"]}>✦</span>
+        </span>
+      ))
+    }
+  </div>
+</div>
