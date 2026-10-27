@@ -1,0 +1,19 @@
+---
+import { Image } from "astro:assets";
+import { imagen as props, type Bloque } from "@/lib/strapi";
+
+type Props = Extract<Bloque, { __component: "bloques.imagen" }>;
+
+const { imagen, pieDeFoto } = Astro.props;
+---
+
+<figure class="mx-auto max-w-5xl px-4 py-16 lg:px-8" data-reveal="zoom">
+  <Image
+    {...props(imagen)}
+    alt={imagen.alternativeText ?? pieDeFoto ?? ""}
+    class="h-auto w-full rounded-3xl shadow-xl"
+    widths={[600, 1000, 1600]}
+    sizes="(min-width: 1024px) 64rem, 92vw"
+  />
+  {pieDeFoto && <figcaption class="mt-4 text-center text-ink/70">{pieDeFoto}</figcaption>}
+</figure>

@@ -2,7 +2,8 @@
 
 Web de la Tuna Universitaria de Distrito de Jaén — [tunadejaen.es](https://www.tunadejaen.es/).
 
-Hecha con [Astro](https://astro.build/) y Tailwind CSS.
+Hecha con [Astro](https://astro.build/) y Tailwind CSS. El contenido se edita en
+el gestor de contenidos (Strapi), que está en el repo `tunadejaen-cms`.
 
 ```sh
 pnpm install     # instalar dependencias
@@ -11,80 +12,38 @@ pnpm build       # comprobar y generar la web en ./dist
 pnpm preview     # ver la versión generada
 ```
 
-## Cómo actualizar el contenido
+## Puesta en marcha
 
-Todo el contenido que cambia a menudo está en archivos de texto; no hace falta
-tocar el diseño. Después de cualquier cambio, `pnpm build` comprueba que todo
-está bien.
+1. Arranca el gestor (`pnpm dev` en `tunadejaen-cms`), en http://localhost:1337.
+2. Copia `.env.example` a `.env` y revisa `STRAPI_URL`.
+3. `pnpm dev` aquí.
 
-### Crónicas del Lunes Santo y del Aguinaldo
+La web es estática: el contenido y las fotos se leen de Strapi al compilar, así
+que para `pnpm dev` y `pnpm build` el gestor tiene que estar arrancado. La web
+publicada no depende de él.
 
-Cada edición es una carpeta con su crónica y sus fotos:
+## Cómo se edita el contenido
 
-```text
-src/content/cronicas/
-├── lunes-santo/
-│   ├── 2026/
-│   │   ├── index.md        ← la crónica
-│   │   ├── 01.jpg          ← fotos de la galería (en orden de nombre)
-│   │   └── 02.jpg
-│   └── 2025/
-│       └── index.md
-└── aguinaldo/
-    └── 2025/
-        └── index.md
-```
+Todo se cambia desde el panel de Strapi (http://localhost:1337/admin en local):
 
-Para añadir una edición nueva (por ejemplo, el Lunes Santo de 2027):
+| En el panel | Dónde se ve |
+|---|---|
+| Ajustes generales | Nombre, lema, menú, botón «Contrátanos» y modo «en construcción» |
+| Contacto | Sección de contacto, pie, Ensayos y pantalla «en construcción» |
+| Pie de página | Columnas de enlaces, botón y texto final del pie |
+| Inicio | Portada y bloques de la página principal |
+| Página | `/historia`, `/ensayos`, `/archivo`… y cualquier página nueva (`/<slug>`) |
+| Evento anual + Crónica | `/lunes-santo`, `/lunes-santo/2026`… |
+| Foto del archivo | `/archivo` (bloque «Listado» de tipo archivo) |
+| Actuación (agenda) | `/agenda` (las fechas pasadas dejan de mostrarse) |
+| Noticia de prensa | `/prensa` |
+| Palmarés y Línea temporal | Bloques «Palmarés» y «Línea temporal» |
 
-1. Copia la carpeta de otro año y renómbrala a `2027`.
-2. Edita `index.md`: la cabecera entre `---` y el texto de la crónica debajo.
+Las páginas se montan con bloques. Cada tipo de bloque tiene su componente en
+`src/components/bloques/` y se reparten en `src/components/Bloques.astro`.
 
-   ```md
-   ---
-   titulo: "Cantando a la salida de la Virgen"
-   fecha: 2027-03-22
-   resumen: "Una frase que resuma el día."
-   portada: 03.jpg            # opcional: foto de cabecera (si no, la primera)
-   pies:                      # opcional: textos de las fotos
-     03.jpg: "La salida de la Virgen"
-   ---
+## Código
 
-   Aquí va la crónica. Se pueden usar **negritas**, [enlaces](https://...) y
-   citas empezando la línea con `>`.
-   ```
-
-3. Mete las fotos (`.jpg`, `.png` o `.webp`) en la misma carpeta. Se optimizan
-   solas, no hace falta reducirlas.
-
-Las páginas se crean automáticamente:
-
-- `/lunes-santo` y `/aguinaldo` muestran siempre la edición más reciente.
-- `/lunes-santo/2027`, `/aguinaldo/2025`… muestran cada año.
-
-Para añadir otro evento anual, añádelo en `src/data/eventos.ts` y crea su
-carpeta en `src/content/cronicas/`.
-
-### Palmarés
-
-`src/data/palmares.ts`: cambia los números de `cantidad`. Los años de historia
-se calculan solos a partir del año de fundación.
-
-### Prensa
-
-`src/data/prensa.ts`: añade una entrada por noticia (fecha, medio, título y
-enlace). Se ordenan solas de la más nueva a la más antigua.
-
-### Agenda pública
-
-`src/data/agenda.ts`: añade una entrada por actuación. Las fechas pasadas dejan
-de mostrarse en la siguiente publicación.
-
-### Archivo de fotos
-
-Guarda la foto en `src/assets/` y añádela a la lista de `src/data/archivo.ts`.
-
-### Historia (timeline)
-
-Los hitos están en `src/data/historia.ts` y se usan en la portada y en
-`/historia`.
+- `src/lib/strapi.ts`: peticiones a Strapi, tipos y utilidades de imágenes.
+- `src/lib/rich-text.ts`: convierte el texto del editor de Strapi en HTML.
+- `src/pages/[slug]/`: una sola ruta para las páginas y los eventos.

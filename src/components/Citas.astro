@@ -1,11 +1,18 @@
 ---
 import { Image } from "astro:assets";
-import { eventos } from "@/data/eventos";
-import { getCronicas, getPortada, getYear } from "@/lib/cronicas";
+import Encabezado from "@/components/Encabezado.astro";
+import { getCronicas, getEventos, getPortada, getYear, imagen } from "@/lib/strapi";
+
+interface Props {
+  antetitulo?: string | null;
+  titulo?: string | null;
+}
+
+const { antetitulo, titulo } = Astro.props;
 
 // Tarjeta por evento anual con la portada de su última crónica
 const citas = await Promise.all(
-  eventos.map(async (evento) => {
+  (await getEventos()).map(async (evento) => {
     const [ultima] = await getCronicas(evento.slug);
     return {
       evento,
@@ -17,26 +24,19 @@ const citas = await Promise.all(
 ---
 
 <section id="citas" class="mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-32">
-  <div class="max-w-2xl" data-reveal>
-    <span class="text-sm font-semibold uppercase tracking-[0.25em] text-primary-700"
-      >Cada año</span
-    >
-    <h2 class="mt-3 font-display text-4xl font-bold leading-tight lg:text-5xl">
-      Dos citas que nunca faltan
-    </h2>
-  </div>
+  <Encabezado antetitulo={antetitulo} titulo={titulo} />
 
   <ul class="mt-14 grid gap-6 lg:grid-cols-[1.25fr_1fr]">
     {
       citas.map(({ evento, year, portada }, index) => (
-        <li data-reveal={index === 0 ? "left" : "right"}>
+        <li data-reveal={index % 2 === 0 ? "left" : "right"}>
           <a
             href={year ? `/${evento.slug}` : "/agenda"}
             class="group relative isolate flex min-h-[26rem] flex-col justify-end overflow-hidden rounded-3xl bg-ink p-8 text-white lg:min-h-[32rem] lg:p-10"
           >
             {portada ? (
               <Image
-                src={portada.src}
+                {...imagen(portada)}
                 alt=""
                 class="absolute inset-0 -z-20 h-full w-full object-cover transition duration-1000 group-hover:scale-105"
                 widths={[600, 1000]}
@@ -51,16 +51,16 @@ const citas = await Promise.all(
               />
             )}
             <div class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/60 to-transparent" />
-            {index === 0 && (
+            {evento.etiqueta && (
               <span class="absolute right-6 top-6 rounded-full bg-primary-600 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest">
-                Nuestro gran día
+                {evento.etiqueta}
               </span>
             )}
-            <span class="text-sm font-semibold uppercase tracking-[0.25em] text-primary-400">
-              {evento.lema}
-            </span>
+            {evento.lema && (
+              <span class="text-sm font-semibold uppercase tracking-[0.25em] text-primary-400">{evento.lema}</span>
+            )}
             <h3 class="mt-3 font-display text-5xl font-bold lg:text-6xl">{evento.nombre}</h3>
-            <p class="mt-4 max-w-md text-lg text-white/75">{evento.descripcion}</p>
+            {evento.descripcion && <p class="mt-4 max-w-md text-lg text-white/75">{evento.descripcion}</p>}
             <span class="mt-8 inline-flex items-center gap-2 font-semibold text-white">
               {year ? `Crónica ${year}` : "Próximamente"}
               <span class="transition group-hover:translate-x-1" aria-hidden="true">→</span>

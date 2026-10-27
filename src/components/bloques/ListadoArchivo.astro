@@ -1,0 +1,55 @@
+---
+import { Image, getImage } from "astro:assets";
+import { getContacto, getFotosArchivo, imagen, imagenAncho } from "@/lib/strapi";
+
+const contacto = await getContacto();
+// Versión grande de cada foto para el visor a pantalla completa
+const fotos = await Promise.all(
+  (await getFotosArchivo()).map(async (foto) => ({
+    ...foto,
+    grande: (await getImage(imagenAncho(foto.imagen, 1800))).src,
+  }))
+);
+---
+
+<section class="mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-32">
+  <ul class="columns-1 gap-6 sm:columns-2 lg:columns-3">
+    {
+      fotos.map((foto, index) => (
+        <li class="mb-6 break-inside-avoid" data-reveal style={`--delay: ${(index % 3) * 120}ms`}>
+          <button
+            type="button"
+            class="group relative block w-full overflow-hidden rounded-2xl bg-white text-left shadow-sm"
+            data-lightbox={foto.grande}
+            data-caption={foto.pieDeFoto}
+            aria-label={`Ampliar foto: ${foto.pieDeFoto}`}
+          >
+            <Image
+              {...imagen(foto.imagen)}
+              alt={foto.imagen.alternativeText ?? foto.pieDeFoto}
+              class="h-auto w-full transition duration-700 group-hover:scale-105"
+              widths={[400, 800]}
+              sizes="(min-width: 1024px) 26rem, (min-width: 640px) 45vw, 92vw"
+            />
+            <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/90 to-transparent p-5 pt-16 text-white opacity-100 transition duration-500 sm:translate-y-4 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100">
+              <span class="block font-display text-xl font-bold">{foto.pieDeFoto}</span>
+              {foto.credito && <span class="mt-1 block text-sm text-white/70">Foto: {foto.credito}</span>}
+            </span>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+
+  {
+    contacto && (
+      <p class="mt-12 text-center text-ink/70" data-reveal>
+        ¿Tienes fotos antiguas de la Tuna? Mándanoslas a
+        <a href={`mailto:${contacto.email}`} class="font-semibold text-primary-700 underline-offset-4 hover:underline">
+          {contacto.email}
+        </a>
+        .
+      </p>
+    )
+  }
+</section>

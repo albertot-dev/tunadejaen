@@ -1,0 +1,44 @@
+---
+import { Image, getImage } from "astro:assets";
+import Encabezado from "@/components/Encabezado.astro";
+import { imagen, imagenAncho, type Bloque } from "@/lib/strapi";
+
+type Props = Extract<Bloque, { __component: "bloques.galeria" }>;
+
+const { titulo } = Astro.props;
+const fotos = await Promise.all(
+  (Astro.props.fotos ?? []).map(async (foto) => ({
+    foto,
+    grande: (await getImage(imagenAncho(foto, 1800))).src,
+  }))
+);
+---
+
+{
+  fotos.length > 0 && (
+    <section class="mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-32">
+      <Encabezado titulo={titulo} />
+      <ul class:list={["columns-2 gap-4 lg:columns-3", titulo && "mt-12"]}>
+        {fotos.map(({ foto, grande }, index) => (
+          <li class="mb-4 break-inside-avoid" data-reveal style={`--delay: ${(index % 3) * 100}ms`}>
+            <button
+              type="button"
+              class="group relative block w-full overflow-hidden rounded-xl"
+              data-lightbox={grande}
+              data-caption={foto.caption ?? ""}
+              aria-label={`Ampliar foto ${index + 1}`}
+            >
+              <Image
+                {...imagen(foto)}
+                alt={foto.alternativeText ?? foto.caption ?? ""}
+                class="h-auto w-full transition duration-700 group-hover:scale-105"
+                widths={[400, 800]}
+                sizes="(min-width: 1024px) 26rem, 46vw"
+              />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}

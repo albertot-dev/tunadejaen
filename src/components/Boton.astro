@@ -1,0 +1,27 @@
+---
+import type { Enlace } from "@/lib/strapi";
+
+interface Props {
+  enlace: Enlace;
+  variante?: "primario" | "blanco" | "contorno" | "contorno-oscuro";
+  class?: string;
+}
+
+const { enlace, variante = "primario", class: className } = Astro.props;
+
+const estilos = {
+  primario: "bg-primary-600 text-white hover:-translate-y-0.5 hover:bg-primary-500",
+  blanco: "bg-white text-primary-800 hover:bg-cream",
+  contorno: "border border-white/50 text-white hover:bg-white/10",
+  "contorno-oscuro": "border border-ink/20 hover:border-primary-600 hover:text-primary-700",
+};
+---
+
+<a
+  href={enlace.url}
+  target={enlace.nuevaPestana ? "_blank" : undefined}
+  rel={enlace.nuevaPestana ? "noopener" : undefined}
+  class:list={["inline-block rounded-full px-7 py-3.5 font-semibold transition", estilos[variante], className]}
+>
+  {enlace.texto}
+</a>

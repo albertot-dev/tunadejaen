@@ -1,35 +1,9 @@
 ---
-import { contactos, direccion, email, formatPhone } from "@/data/contacto";
+import { formatPhone, getAjustes, getContacto, getPiePagina } from "@/lib/strapi";
 
-const columnas = [
-  {
-    titulo: "La Tuna",
-    links: [
-      { href: "/historia", label: "Historia" },
-      { href: "/lunes-santo", label: "Lunes Santo" },
-      { href: "/aguinaldo", label: "Aguinaldo" },
-      { href: "/ensayos", label: "Ensayos y taller musical" },
-    ],
-  },
-  {
-    titulo: "Descubre",
-    links: [
-      { href: "/archivo", label: "Archivo" },
-      { href: "/prensa", label: "Prensa" },
-      { href: "/agenda", label: "Agenda pública" },
-      { href: "/#palmares", label: "Palmarés" },
-    ],
-  },
-  {
-    titulo: "Servicios",
-    links: [
-      { href: "/#servicios", label: "Bodas" },
-      { href: "/#servicios", label: "Bautizos y comuniones" },
-      { href: "/#servicios", label: "Serenatas y rondas" },
-      { href: "/#contacto", label: "…y mucho más" },
-    ],
-  },
-];
+const [ajustes, contacto, pie] = await Promise.all([getAjustes(), getContacto(), getPiePagina()]);
+const nombreCompleto = ajustes?.nombreCompleto ?? "Tuna Universitaria de Distrito de Jaén";
+const direccion = contacto?.direccion;
 ---
 
 <footer class="mt-40 w-full">
@@ -54,15 +28,15 @@ const columnas = [
         <div class="flex items-center gap-6">
           <img
             src="/escudo-tuna-blanco.png"
-            alt="Escudo de la Tuna Universitaria de Distrito de Jaén"
+            alt={`Escudo de la ${nombreCompleto}`}
             class="h-24 w-24 shrink-0 object-contain lg:h-28 lg:w-28"
             loading="lazy"
           />
           <div>
-            <p class="font-display text-2xl font-bold leading-tight lg:text-3xl">
-              Tuna Universitaria<br />de Distrito de Jaén
+            <p class="max-w-xs text-balance font-display text-2xl font-bold leading-tight lg:text-3xl">
+              {nombreCompleto}
             </p>
-            <p class="mt-2 font-display italic text-primary-400">la muy ilustre e andariega</p>
+            {ajustes?.lema && <p class="mt-2 font-display italic text-primary-400">{ajustes.lema}</p>}
           </div>
         </div>
 
@@ -71,28 +45,37 @@ const columnas = [
             <img src="/40-aniversario.png" alt="" class="absolute max-h-24 w-auto blur-md" loading="lazy" />
             <img src="/40-aniversario.png" alt="" class="relative max-h-24 w-auto drop-shadow-lg" loading="lazy" />
           </div>
-          <a
-            href="/#contacto"
-            class="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-7 py-3.5 font-semibold transition hover:-translate-y-0.5 hover:bg-primary-500"
-          >
-            Contrata a la Tuna <span aria-hidden="true">→</span>
-          </a>
+          {
+            pie?.boton && (
+              <a
+                href={pie.boton.url}
+                class="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-7 py-3.5 font-semibold transition hover:-translate-y-0.5 hover:bg-primary-500"
+              >
+                {pie.boton.texto} <span aria-hidden="true">→</span>
+              </a>
+            )
+          }
         </div>
       </div>
 
       <!-- Enlaces y contacto -->
       <div class="grid grid-cols-2 gap-x-8 gap-y-12 py-14 lg:grid-cols-[1fr_1fr_1fr_1.4fr]">
         {
-          columnas.map((columna) => (
+          (pie?.columnas ?? []).map((columna) => (
             <nav aria-label={columna.titulo}>
               <h2 class="text-xs font-semibold uppercase tracking-[0.25em] text-primary-400">
                 {columna.titulo}
               </h2>
               <ul class="mt-5 space-y-3">
-                {columna.links.map((link) => (
+                {columna.enlaces.map((link) => (
                   <li>
-                    <a href={link.href} class="text-white/75 transition hover:text-white">
-                      {link.label}
+                    <a
+                      href={link.url}
+                      target={link.nuevaPestana ? "_blank" : undefined}
+                      rel={link.nuevaPestana ? "noopener" : undefined}
+                      class="text-white/75 transition hover:text-white"
+                    >
+                      {link.texto}
                     </a>
                   </li>
                 ))}
@@ -101,40 +84,68 @@ const columnas = [
           ))
         }
 
-        <div class="col-span-2 lg:col-span-1">
-          <h2 class="text-xs font-semibold uppercase tracking-[0.25em] text-primary-400">
-            Encuéntranos
-          </h2>
-          <address class="mt-5 space-y-1 not-italic text-white/75">
-            <p class="font-semibold text-white">{direccion.lugar}</p>
-            <p>{direccion.campus}</p>
-            <p>{direccion.despacho}</p>
-            <p>{direccion.ciudad}</p>
-          </address>
-          <a
-            href={`mailto:${email}`}
-            class="mt-5 inline-block font-display text-lg underline decoration-white/30 underline-offset-4 transition hover:decoration-primary-400"
-          >
-            {email}
-          </a>
-          <ul class="mt-4 space-y-1 text-sm text-white/60">
-            {
-              contactos.map((contacto) => (
-                <li>
-                  <a href={`tel:${contacto.phone}`} class="transition hover:text-white">
-                    {contacto.name} · <span class="tabular-nums">{formatPhone(contacto.phone)}</span>
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
+        {
+          contacto && (
+            <div class="col-span-2 lg:col-span-1">
+              <h2 class="text-xs font-semibold uppercase tracking-[0.25em] text-primary-400">Encuéntranos</h2>
+              {direccion && (
+                <address class="mt-5 space-y-1 not-italic text-white/75">
+                  {direccion.lugar && <p class="font-semibold text-white">{direccion.lugar}</p>}
+                  {direccion.campus && <p>{direccion.campus}</p>}
+                  {direccion.despacho && <p>{direccion.despacho}</p>}
+                  {direccion.ciudad && <p>{direccion.ciudad}</p>}
+                  {direccion.enlaceMapa && (
+                    <a
+                      href={direccion.enlaceMapa}
+                      target="_blank"
+                      rel="noopener"
+                      class="inline-block pt-1 text-sm text-primary-400 transition hover:text-white"
+                    >
+                      Ver en el mapa →
+                    </a>
+                  )}
+                </address>
+              )}
+              <a
+                href={`mailto:${contacto.email}`}
+                class="mt-5 inline-block font-display text-lg underline decoration-white/30 underline-offset-4 transition hover:decoration-primary-400"
+              >
+                {contacto.email}
+              </a>
+              <ul class="mt-4 space-y-1 text-sm text-white/60">
+                {contacto.personas.map((persona) => (
+                  <li>
+                    <a href={`tel:${persona.telefono}`} class="transition hover:text-white">
+                      {persona.nombre} · <span class="tabular-nums">{formatPhone(persona.telefono)}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              {contacto.redes.length > 0 && (
+                <ul class="mt-6 flex flex-wrap gap-2" aria-label="Redes sociales">
+                  {contacto.redes.map((red) => (
+                    <li>
+                      <a
+                        href={red.url}
+                        target="_blank"
+                        rel="noopener"
+                        class="inline-block rounded-full border border-white/20 px-4 py-1.5 text-sm text-white/75 transition hover:border-primary-400 hover:text-white"
+                      >
+                        {red.red}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )
+        }
       </div>
 
       <!-- Pie -->
       <div class="flex flex-col gap-4 border-t border-white/10 py-8 text-sm text-white/50 sm:flex-row sm:items-center sm:justify-between">
-        <p>© {new Date().getFullYear()} Tuna Universitaria de Distrito de Jaén</p>
-        <p>Hecho con <span class="text-primary-400" aria-label="música">♪</span> en Jaén</p>
+        <p>© {new Date().getFullYear()} {nombreCompleto}</p>
+        {pie?.textoFinal && <p>{pie.textoFinal}</p>}
         <a href="#" class="inline-flex items-center gap-2 transition hover:text-white">
           Volver arriba <span aria-hidden="true">↑</span>
         </a>

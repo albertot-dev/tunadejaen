@@ -1,6 +1,13 @@
 ---
 import { Image } from "astro:assets";
-import headerImage from "@/assets/header-3.jpg";
+import { imagen, type Inicio } from "@/lib/strapi";
+
+interface Props {
+  portada: NonNullable<Inicio["portada"]>;
+}
+
+const { lineaSuperior, lineaMedia, titulo, texto, imagen: foto, botones } = Astro.props.portada;
+const cintas = [lineaSuperior, lineaMedia].filter(Boolean);
 
 // Notas musicales flotando sobre la portada: posición, retardo y tamaño
 const notas = [
@@ -14,15 +21,19 @@ const notas = [
 ---
 
 <section class="hero relative isolate flex min-h-[100svh] items-end overflow-hidden bg-ink">
-  <Image
-    src={headerImage}
-    alt="La Tuna de Jaén al completo en el patio de un claustro"
-    class="hero-image absolute inset-0 -z-20 h-full w-full object-cover"
-    widths={[800, 1400, 2048]}
-    sizes="100vw"
-    loading="eager"
-    fetchpriority="high"
-  />
+  {
+    foto && (
+      <Image
+        {...imagen(foto)}
+        alt={foto.alternativeText ?? ""}
+        class="hero-image absolute inset-0 -z-20 h-full w-full object-cover"
+        widths={[800, 1400, 2048]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+      />
+    )
+  }
   <div
     class="absolute inset-0 -z-10 bg-gradient-to-t from-ink via-ink/55 to-black/30"
   >
@@ -43,36 +54,46 @@ const notas = [
 
   <div class="mx-auto w-full max-w-7xl px-4 pb-24 pt-40 lg:px-8 lg:pb-32">
     <h1 class="flex flex-col items-start gap-2 font-display text-white">
-      <span
-        class="ribbon bg-primary-600/90 px-3 py-1 text-xl italic tracking-wide backdrop-blur-sm lg:text-4xl"
-        style="--i: 0">la muy ilustre</span
-      >
-      <span
-        class="ribbon bg-primary-600/90 px-3 py-1 text-xl italic tracking-wide backdrop-blur-sm lg:text-4xl"
-        style="--i: 1">e andariega</span
-      >
+      {
+        cintas.map((cinta, index) => (
+          <span
+            class="ribbon bg-primary-600/90 px-3 py-1 text-xl italic tracking-wide backdrop-blur-sm lg:text-4xl"
+            style={`--i: ${index}`}
+          >
+            {cinta}
+          </span>
+        ))
+      }
       <span
         class="ribbon whitespace-nowrap bg-primary-600/90 px-3 py-1 text-[2.6rem] font-bold uppercase tracking-tight backdrop-blur-sm sm:text-6xl lg:text-8xl"
-        style="--i: 2">Tuna de Jaén</span
+        style={`--i: ${cintas.length}`}>{titulo}</span
       >
     </h1>
-    <p class="hero-fade mt-8 max-w-xl text-lg text-white/85 lg:text-xl" style="--i: 3">
-      Tuna Universitaria de Distrito de Jaén. Rondando calles, plazas y medio
-      mundo desde 1983.
-    </p>
+    {
+      texto && (
+        <p class="hero-fade mt-8 max-w-xl text-lg text-white/85 lg:text-xl" style="--i: 3">
+          {texto}
+        </p>
+      )
+    }
     <div class="hero-fade mt-8 flex flex-wrap gap-4" style="--i: 4">
-      <a
-        href="#contacto"
-        class="group relative overflow-hidden rounded-full bg-primary-600 px-7 py-3.5 font-semibold text-white shadow-[0_0_40px_rgba(10,191,123,0.45)] transition hover:-translate-y-0.5 hover:bg-primary-500"
-      >
-        Contrata a la Tuna
-      </a>
-      <a
-        href="#nosotros"
-        class="rounded-full border border-white/60 px-7 py-3.5 font-semibold text-white transition hover:bg-white hover:text-ink"
-      >
-        Conócenos
-      </a>
+      {
+        botones.map((boton, index) => (
+          <a
+            href={boton.url}
+            target={boton.nuevaPestana ? "_blank" : undefined}
+            rel={boton.nuevaPestana ? "noopener" : undefined}
+            class:list={[
+              "rounded-full px-7 py-3.5 font-semibold text-white transition",
+              index === 0
+                ? "bg-primary-600 shadow-[0_0_40px_rgba(10,191,123,0.45)] hover:-translate-y-0.5 hover:bg-primary-500"
+                : "border border-white/60 hover:bg-white hover:text-ink",
+            ]}
+          >
+            {boton.texto}
+          </a>
+        ))
+      }
     </div>
   </div>
 

@@ -1,11 +1,12 @@
 ---
-import { hitos } from "@/data/historia";
+import { getHitos } from "@/lib/strapi";
 
 interface Props {
   showLink?: boolean;
 }
 
 const { showLink = true } = Astro.props;
+const hitos = await getHitos();
 ---
 
 <section id="historia" class="relative overflow-hidden bg-ink text-white">
@@ -50,19 +51,21 @@ const { showLink = true } = Astro.props;
                   data-reveal={isRight ? "right" : "left"}
                 >
                   <p class="text-outline font-display text-6xl font-bold leading-none text-primary-400 lg:text-8xl">
-                    {hito.year}
+                    {hito.anio}
                   </p>
                   <h3 class="mt-4 font-display text-2xl font-bold lg:text-3xl">
-                    {hito.title}
+                    {hito.titulo}
                   </h3>
-                  <p
-                    class:list={[
-                      "mt-3 max-w-md text-lg leading-relaxed text-white/70",
-                      !isRight && "lg:ml-auto",
-                    ]}
-                  >
-                    {hito.text}
-                  </p>
+                  {hito.texto && (
+                    <p
+                      class:list={[
+                        "mt-3 max-w-md text-lg leading-relaxed text-white/70",
+                        !isRight && "lg:ml-auto",
+                      ]}
+                    >
+                      {hito.texto}
+                    </p>
+                  )}
                 </div>
               </li>
             );

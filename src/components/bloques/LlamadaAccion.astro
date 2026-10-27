@@ -1,0 +1,29 @@
+---
+import Boton from "@/components/Boton.astro";
+import type { Bloque } from "@/lib/strapi";
+
+type Props = Extract<Bloque, { __component: "bloques.llamada-accion" }>;
+
+const { titulo, texto, botones } = Astro.props;
+---
+
+<section class="mx-auto max-w-7xl px-4 py-24 lg:px-8">
+  <div
+    class="flex flex-col items-start justify-between gap-8 rounded-3xl bg-primary-600 p-8 text-white sm:p-12 lg:flex-row lg:items-center"
+    data-reveal="zoom"
+  >
+    <div>
+      <h2 class="font-display text-3xl font-bold lg:text-4xl">{titulo}</h2>
+      {texto && <p class="mt-2 text-lg text-white/85">{texto}</p>}
+    </div>
+    {
+      botones.length > 0 && (
+        <div class="flex flex-wrap gap-3">
+          {botones.map((enlace, index) => (
+            <Boton enlace={enlace} variante={index === 0 ? "blanco" : "contorno"} class="!px-6 !py-3" />
+          ))}
+        </div>
+      )
+    }
+  </div>
+</section>

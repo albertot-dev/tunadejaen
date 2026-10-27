@@ -7,16 +7,21 @@ import "@fontsource-variable/fraunces";
 import "@/styles/global.css";
 import EnConstruccion from "@/components/EnConstruccion.astro";
 import Footer from "@/components/Footer.astro";
-import { claveVistaPrevia, enConstruccion } from "@/config";
+import Lightbox from "@/components/Lightbox.astro";
+import { claveVistaPrevia } from "@/config";
+import { getAjustes } from "@/lib/strapi";
 interface Props {
-  title: string;
-  description?: string;
+  title?: string | null;
+  description?: string | null;
 }
 
-const {
-  title,
-  description = "Tuna Universitaria de Distrito de Jaén. Música, tradición y Jaén en el corazón desde 1983.",
-} = Astro.props;
+const ajustes = await getAjustes();
+const enConstruccion = ajustes?.enConstruccion ?? false;
+const title = Astro.props.title || ajustes?.seo?.metaTitulo || ajustes?.nombreCorto || "Tuna de Jaén";
+const description =
+  Astro.props.description ||
+  ajustes?.seo?.metaDescripcion ||
+  "Tuna Universitaria de Distrito de Jaén. Música, tradición y Jaén en el corazón desde 1983.";
 ---
 
 <!doctype html>
@@ -106,6 +111,7 @@ const {
     <Navbar />
     <slot />
     <Footer />
+    <Lightbox />
   </body>
 </html>
 

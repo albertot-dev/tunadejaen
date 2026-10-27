@@ -1,16 +1,16 @@
 ---
-import type { ImageMetadata } from "astro";
 import { Image } from "astro:assets";
+import { imagen, type Media } from "@/lib/strapi";
 
 interface Props {
-  eyebrow: string;
+  eyebrow?: string | null;
   title: string;
-  subtitle?: string;
-  image?: ImageMetadata;
+  subtitle?: string | null;
+  image?: Media | null;
   imageAlt?: string;
 }
 
-const { eyebrow, title, subtitle, image, imageAlt = "" } = Astro.props;
+const { eyebrow, title, subtitle, image, imageAlt = image?.alternativeText ?? "" } = Astro.props;
 ---
 
 <section class="page-hero relative isolate overflow-hidden bg-ink text-white">
@@ -18,7 +18,7 @@ const { eyebrow, title, subtitle, image, imageAlt = "" } = Astro.props;
     image && (
       <>
         <Image
-          src={image}
+          {...imagen(image)}
           alt={imageAlt}
           class="page-hero-image absolute inset-0 -z-20 h-full w-full object-cover"
           widths={[800, 1400, 2048]}
@@ -36,10 +36,16 @@ const { eyebrow, title, subtitle, image, imageAlt = "" } = Astro.props;
   />
 
   <div class="mx-auto max-w-7xl px-4 pb-20 pt-40 lg:px-8 lg:pb-28 lg:pt-48">
-    <span
-      class="page-hero-fade inline-block text-sm font-semibold uppercase tracking-[0.25em] text-primary-400"
-      style="--i: 0">{eyebrow}</span
-    >
+    {
+      eyebrow && (
+        <span
+          class="page-hero-fade inline-block text-sm font-semibold uppercase tracking-[0.25em] text-primary-400"
+          style="--i: 0"
+        >
+          {eyebrow}
+        </span>
+      )
+    }
     <h1
       class="page-hero-ribbon mt-4 font-display text-5xl font-bold leading-[1.15] sm:text-6xl lg:text-8xl"
       style="--i: 1"

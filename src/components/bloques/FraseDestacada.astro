@@ -1,0 +1,44 @@
+---
+import Boton from "@/components/Boton.astro";
+import { conNegritas, type Bloque } from "@/lib/strapi";
+
+type Props = Extract<Bloque, { __component: "bloques.frase-destacada" }>;
+
+const { frase, estilo, botones } = Astro.props;
+---
+
+{
+  estilo === "verde" ? (
+    <section class="bg-primary-800 text-white">
+      <div class="mx-auto max-w-5xl px-4 py-24 text-center lg:py-32" data-reveal="zoom">
+        <span class="text-5xl" aria-hidden="true">♫</span>
+        <p
+          class="mt-6 text-balance font-display text-3xl italic leading-snug lg:text-5xl"
+          set:html={conNegritas(frase, "font-bold")}
+        />
+        {botones.length > 0 && (
+          <div class="mt-10 flex flex-wrap justify-center gap-4">
+            {botones.map((enlace, index) => (
+              <Boton enlace={enlace} variante={index === 0 ? "blanco" : "contorno"} />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  ) : (
+    <section class="mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-32">
+      <p
+        data-reveal
+        class="mx-auto max-w-5xl text-balance text-center font-display text-3xl font-light leading-tight lg:text-6xl"
+        set:html={conNegritas(frase, "font-bold text-primary-700")}
+      />
+      {botones.length > 0 && (
+        <div class="mt-12 flex flex-wrap justify-center gap-4" data-reveal>
+          {botones.map((enlace, index) => (
+            <Boton enlace={enlace} variante={index === 0 ? "primario" : "contorno-oscuro"} />
+          ))}
+        </div>
+      )}
+    </section>
+  )
+}
