@@ -1,0 +1,96 @@
+---
+// Pinta la lista de bloques que se monta en el gestor (Inicio y Páginas)
+import Citas from "@/components/Citas.astro";
+import Contacto from "@/components/Contacto.astro";
+import Marquee from "@/components/Marquee.astro";
+import Numeros from "@/components/Numeros.astro";
+import Timeline from "@/components/Timeline.astro";
+import FraseDestacada from "@/components/bloques/FraseDestacada.astro";
+import Galeria from "@/components/bloques/Galeria.astro";
+import Imagen from "@/components/bloques/Imagen.astro";
+import ImagenTexto from "@/components/bloques/ImagenTexto.astro";
+import ListadoAgenda from "@/components/bloques/ListadoAgenda.astro";
+import ListadoArchivo from "@/components/bloques/ListadoArchivo.astro";
+import ListadoPrensa from "@/components/bloques/ListadoPrensa.astro";
+import LlamadaAccion from "@/components/bloques/LlamadaAccion.astro";
+import Pasos from "@/components/bloques/Pasos.astro";
+import Tarjetas from "@/components/bloques/Tarjetas.astro";
+import Texto from "@/components/bloques/Texto.astro";
+import Video from "@/components/bloques/Video.astro";
+import type { Bloque } from "@/lib/strapi";
+
+interface Props {
+  bloques: Bloque[];
+}
+
+const { bloques } = Astro.props;
+
+// Anclas a las que apuntan los enlaces del menú y del pie (/#servicios, /#contacto…):
+// se las lleva el primer bloque de cada tipo.
+const ANCLAS: Partial<Record<Bloque["__component"], string>> = {
+  "bloques.tarjetas": "servicios",
+  "bloques.frase-destacada": "nosotros",
+};
+const usadas = new Set<string>();
+const ancla = (tipo: Bloque["__component"]) => {
+  const id = ANCLAS[tipo];
+  if (!id || usadas.has(id)) return undefined;
+  usadas.add(id);
+  return id;
+};
+---
+
+{
+  bloques.map((bloque) => {
+    switch (bloque.__component) {
+      case "bloques.texto":
+        return <Texto {...bloque} />;
+      case "bloques.frase-destacada":
+        return (
+          <div id={ancla(bloque.__component)}>
+            <FraseDestacada {...bloque} />
+          </div>
+        );
+      case "bloques.imagen-texto":
+        return <ImagenTexto {...bloque} />;
+      case "bloques.tarjetas":
+        return <Tarjetas {...bloque} id={ancla(bloque.__component)} />;
+      case "bloques.pasos":
+        return <Pasos {...bloque} />;
+      case "bloques.llamada-accion":
+        return <LlamadaAccion {...bloque} />;
+      case "bloques.galeria":
+        return <Galeria {...bloque} />;
+      case "bloques.imagen":
+        return <Imagen {...bloque} />;
+      case "bloques.video":
+        return <Video {...bloque} />;
+      case "bloques.marquesina":
+        return (
+          <Marquee
+            items={bloque.elementos.split("\n").map((item) => item.trim()).filter(Boolean)}
+            variant={bloque.contorno ? "outline" : "green"}
+            reverse={bloque.invertida}
+          />
+        );
+      case "bloques.palmares":
+        return <Numeros antetitulo={bloque.antetitulo} titulo={bloque.titulo} />;
+      case "bloques.linea-temporal":
+        return <Timeline showLink={bloque.mostrarEnlace} />;
+      case "bloques.citas-anuales":
+        return <Citas antetitulo={bloque.antetitulo} titulo={bloque.titulo} />;
+      case "bloques.contacto":
+        return <Contacto antetitulo={bloque.antetitulo} titulo={bloque.titulo} texto={bloque.texto} />;
+      case "bloques.listado":
+        return bloque.tipo === "archivo" ? (
+          <ListadoArchivo />
+        ) : bloque.tipo === "agenda" ? (
+          <ListadoAgenda />
+        ) : (
+          <ListadoPrensa />
+        );
+      default:
+        return null;
+    }
+  })
+}

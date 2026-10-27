@@ -1,0 +1,32 @@
+---
+// Antetítulo + título de sección, con el estilo de toda la web
+interface Props {
+  antetitulo?: string | null;
+  titulo?: string | null;
+  oscuro?: boolean;
+  class?: string;
+  reveal?: string;
+}
+
+const { antetitulo, titulo, oscuro = false, class: className = "max-w-2xl", reveal = "" } = Astro.props;
+---
+
+{
+  (antetitulo || titulo) && (
+    <div class={className} data-reveal={reveal}>
+      {antetitulo && (
+        <span
+          class:list={[
+            "text-sm font-semibold uppercase tracking-[0.25em]",
+            oscuro ? "text-primary-400" : "text-primary-700",
+          ]}
+        >
+          {antetitulo}
+        </span>
+      )}
+      {titulo && (
+        <h2 class="mt-3 text-balance font-display text-4xl font-bold leading-tight lg:text-5xl">{titulo}</h2>
+      )}
+    </div>
+  )
+}

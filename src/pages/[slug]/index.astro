@@ -1,0 +1,56 @@
+---
+// Una sola ruta para todo lo que cuelga de la raíz:
+//   /historia, /ensayos… → páginas montadas con bloques en el gestor
+//   /lunes-santo, /aguinaldo… → crónica de la edición más reciente del evento
+// Si una página y un evento comparten slug, gana la página.
+import type { GetStaticPaths } from "astro";
+import Bloques from "@/components/Bloques.astro";
+import CronicaPage from "@/components/CronicaPage.astro";
+import PageHero from "@/components/PageHero.astro";
+import Layout from "@/layouts/Layout.astro";
+import { getCronicas, getEventos, getPaginas } from "@/lib/strapi";
+
+export const getStaticPaths = (async () => {
+  const paginas = await getPaginas();
+  const slugsPaginas = new Set(paginas.map((pagina) => pagina.slug));
+
+  const eventos = await Promise.all(
+    (await getEventos())
+      .filter((evento) => !slugsPaginas.has(evento.slug))
+      .map(async (evento) => ({ evento, cronicas: await getCronicas(evento.slug) }))
+  );
+
+  return [
+    ...paginas.map((pagina) => ({ params: { slug: pagina.slug }, props: { tipo: "pagina" as const, pagina } })),
+    ...eventos
+      .filter(({ cronicas }) => cronicas.length > 0)
+      .map(({ evento, cronicas }) => ({
+        params: { slug: evento.slug },
+        props: { tipo: "evento" as const, evento, cronicas },
+      })),
+  ];
+}) satisfies GetStaticPaths;
+
+const props = Astro.props;
+---
+
+{
+  props.tipo === "evento" ? (
+    <CronicaPage evento={props.evento} cronica={props.cronicas[0]} cronicas={props.cronicas} />
+  ) : (
+    <Layout
+      title={props.pagina.seo?.metaTitulo || `${props.pagina.titulo} · Tuna de Jaén`}
+      description={props.pagina.seo?.metaDescripcion}
+    >
+      <PageHero
+        eyebrow={props.pagina.cabecera?.antetitulo}
+        title={props.pagina.cabecera?.titulo ?? props.pagina.titulo}
+        subtitle={props.pagina.cabecera?.subtitulo}
+        image={props.pagina.cabecera?.imagen}
+      />
+      <main>
+        <Bloques bloques={props.pagina.bloques} />
+      </main>
+    </Layout>
+  )
+}

@@ -1,14 +1,12 @@
 ---
 import { Image, getImage } from "astro:assets";
-import { render } from "astro:content";
-import Lightbox from "@/components/Lightbox.astro";
 import PageHero from "@/components/PageHero.astro";
-import type { EventoAnual } from "@/data/eventos";
-import { getFotos, getPortada, getYear, type Cronica } from "@/lib/cronicas";
+import RichText from "@/components/RichText.astro";
 import Layout from "@/layouts/Layout.astro";
+import { getPortada, getYear, imagen, imagenAncho, type Cronica, type Evento } from "@/lib/strapi";
 
 interface Props {
-  evento: EventoAnual;
+  evento: Evento;
   cronica: Cronica;
   /** Todas las ediciones del evento, de la más reciente a la más antigua */
   cronicas: Cronica[];
@@ -16,21 +14,20 @@ interface Props {
 
 const { evento, cronica, cronicas } = Astro.props;
 const year = getYear(cronica);
-const { Content } = await render(cronica);
 
 const portada = getPortada(cronica);
 const fotos = await Promise.all(
-  getFotos(cronica).map(async (foto) => ({
-    ...foto,
-    large: (await getImage({ src: foto.src, width: 1800 })).src,
+  (cronica.galeria ?? []).map(async (foto) => ({
+    foto,
+    large: (await getImage(imagenAncho(foto, 1800))).src,
   }))
 );
 
-const index = cronicas.findIndex((item) => item.id === cronica.id);
+const index = cronicas.findIndex((item) => item.documentId === cronica.documentId);
 const posterior = cronicas[index - 1];
 const anterior = cronicas[index + 1];
 
-const fecha = cronica.data.fecha.toLocaleDateString("es-ES", {
+const fecha = new Date(`${cronica.fecha}T12:00:00`).toLocaleDateString("es-ES", {
   weekday: "long",
   day: "numeric",
   month: "long",
@@ -39,14 +36,14 @@ const fecha = cronica.data.fecha.toLocaleDateString("es-ES", {
 const canonical = new URL(`/${evento.slug}/${year}`, Astro.site ?? Astro.url).href;
 ---
 
-<Layout title={`${evento.nombre} ${year} · Tuna de Jaén`} description={cronica.data.resumen}>
+<Layout title={`${evento.nombre} ${year} · Tuna de Jaén`} description={cronica.resumen}>
   <link slot="head" rel="canonical" href={canonical} />
 
   <PageHero
     eyebrow={`${evento.nombre} · ${year}`}
-    title={cronica.data.titulo}
-    subtitle={cronica.data.resumen}
-    image={portada?.src}
+    title={cronica.titulo}
+    subtitle={cronica.resumen}
+    image={portada}
     imageAlt={portada ? `${evento.nombre} ${year}` : ""}
   />
 
@@ -59,7 +56,7 @@ const canonical = new URL(`/${evento.slug}/${year}`, Astro.site ?? Astro.url).hr
           return (
             <a
               href={`/${evento.slug}/${itemYear}`}
-              aria-current={item.id === cronica.id ? "page" : undefined}
+              aria-current={item.documentId === cronica.documentId ? "page" : undefined}
               class="shrink-0 rounded-full border border-ink/15 px-4 py-1.5 font-semibold tabular-nums transition hover:border-primary-600 hover:text-primary-700 aria-[current=page]:border-primary-600 aria-[current=page]:bg-primary-600 aria-[current=page]:text-white"
             >
               {itemYear}
@@ -75,8 +72,8 @@ const canonical = new URL(`/${evento.slug}/${year}`, Astro.site ?? Astro.url).hr
       <p class="text-sm font-semibold uppercase tracking-[0.25em] text-primary-700 first-letter:uppercase" data-reveal>
         {fecha}
       </p>
-      <div class="cronica mt-8" data-reveal>
-        <Content />
+      <div class="mt-8" data-reveal>
+        <RichText contenido={cronica.contenido} class="prosa prosa--capital" />
       </div>
     </article>
 
@@ -95,18 +92,18 @@ const canonical = new URL(`/${evento.slug}/${year}`, Astro.site ?? Astro.url).hr
         {
           fotos.length > 0 ? (
             <ul class="mt-12 columns-2 gap-4 lg:columns-3">
-              {fotos.map((foto, fotoIndex) => (
+              {fotos.map(({ foto, large }, fotoIndex) => (
                 <li class="mb-4 break-inside-avoid" data-reveal style={`--delay: ${(fotoIndex % 3) * 100}ms`}>
                   <button
                     type="button"
                     class="group relative block w-full overflow-hidden rounded-xl"
-                    data-lightbox={foto.large}
-                    data-caption={foto.caption ?? `${evento.nombre} ${year}`}
+                    data-lightbox={large}
+                    data-caption={foto.caption || `${evento.nombre} ${year}`}
                     aria-label={`Ampliar foto ${fotoIndex + 1}`}
                   >
                     <Image
-                      src={foto.src}
-                      alt={foto.caption ?? `${evento.nombre} ${year}, foto ${fotoIndex + 1}`}
+                      {...imagen(foto)}
+                      alt={foto.alternativeText || foto.caption || `${evento.nombre} ${year}, foto ${fotoIndex + 1}`}
                       class="h-auto w-full transition duration-700 group-hover:scale-105"
                       widths={[400, 800]}
                       sizes="(min-width: 1024px) 26rem, 46vw"
@@ -157,72 +154,4 @@ const canonical = new URL(`/${evento.slug}/${year}`, Astro.site ?? Astro.url).hr
       }
     </nav>
   </main>
-
-  <Lightbox />
 </Layout>
-
-<style>
-  .cronica :global(p) {
-    margin-top: 1.25em;
-    font-size: 1.15rem;
-    line-height: 1.8;
-    color: rgb(35 31 32 / 0.85);
-  }
-  .cronica :global(p:first-child) {
-    margin-top: 0;
-  }
-  .cronica > :global(p:first-child::first-letter) {
-    float: left;
-    margin-right: 0.75rem;
-    font-family: "Fraunces Variable", serif;
-    font-size: 4.5rem;
-    font-weight: 700;
-    line-height: 0.8;
-    color: #007c54;
-  }
-  .cronica :global(h2),
-  .cronica :global(h3) {
-    margin-top: 2em;
-    font-family: "Fraunces Variable", serif;
-    font-weight: 700;
-    line-height: 1.2;
-  }
-  .cronica :global(h2) {
-    font-size: 2rem;
-  }
-  .cronica :global(h3) {
-    font-size: 1.5rem;
-  }
-  .cronica :global(blockquote) {
-    margin: 2em 0;
-    border-left: 4px solid #008e5c;
-    padding-left: 1.5rem;
-    font-family: "Fraunces Variable", serif;
-    font-size: 1.6rem;
-    font-style: italic;
-    line-height: 1.4;
-  }
-  .cronica :global(blockquote p) {
-    font-size: inherit;
-    color: inherit;
-  }
-  .cronica :global(a) {
-    color: #007c54;
-    font-weight: 600;
-    text-decoration: underline;
-    text-underline-offset: 4px;
-  }
-  .cronica :global(ul),
-  .cronica :global(ol) {
-    margin-top: 1.25em;
-    padding-left: 1.5rem;
-    font-size: 1.15rem;
-    line-height: 1.8;
-  }
-  .cronica :global(ul) {
-    list-style: disc;
-  }
-  .cronica :global(ol) {
-    list-style: decimal;
-  }
-</style>

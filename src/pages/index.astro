@@ -1,31 +1,17 @@
 ---
-import AboutUs from "@/components/AboutUs.astro";
-import Citas from "@/components/Citas.astro";
-import Contacto from "@/components/Contacto.astro";
-import Info from "@/components/Info.astro";
+import Bloques from "@/components/Bloques.astro";
+import Header from "@/components/Header.astro";
 import Intro from "@/components/Intro.astro";
-import Marquee from "@/components/Marquee.astro";
-import Numeros from "@/components/Numeros.astro";
-import Servicios from "@/components/Servicios.astro";
-import Timeline from "@/components/Timeline.astro";
-import Header from "../components/Header.astro";
-import Layout from "../layouts/Layout.astro";
+import Layout from "@/layouts/Layout.astro";
+import { getInicio } from "@/lib/strapi";
+
+const inicio = await getInicio();
 ---
 
-<Layout title="Tuna de Jaén · Tuna Universitaria de Distrito de Jaén">
+<Layout title={inicio?.seo?.metaTitulo} description={inicio?.seo?.metaDescripcion}>
   <Intro />
-  <Header />
-  <Marquee
-    items={["Bodas", "Serenatas", "Rondas", "Certámenes", "Viajes", "Desde 1983"]}
-  />
+  {inicio?.portada && <Header portada={inicio.portada} />}
   <main>
-    <Info />
-    <Numeros />
-    <Timeline />
-    <Citas />
-    <AboutUs />
-    <Servicios />
-    <Marquee items={["Tuna de Jaén", "La muy ilustre e andariega"]} variant="outline" reverse />
-    <Contacto />
+    <Bloques bloques={inicio?.bloques ?? []} />
   </main>
 </Layout>

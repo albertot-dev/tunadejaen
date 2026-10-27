@@ -54,6 +54,78 @@ body {
   -webkit-text-stroke: 1.5px currentColor;
 }
 
+/* Texto escrito en el gestor de contenidos (crónicas y bloques de texto) */
+.prosa > * + * {
+  margin-top: 1.25em;
+}
+.prosa p,
+.prosa ul,
+.prosa ol {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: rgb(35 31 32 / 0.85);
+}
+.prosa--oscuro p,
+.prosa--oscuro ul,
+.prosa--oscuro ol {
+  color: rgb(255 255 255 / 0.75);
+}
+.prosa--capital > p:first-child::first-letter {
+  float: left;
+  margin-right: 0.75rem;
+  font-family: "Fraunces Variable", serif;
+  font-size: 4.5rem;
+  font-weight: 700;
+  line-height: 0.8;
+  color: #007c54;
+}
+.prosa h2,
+.prosa h3,
+.prosa h4 {
+  margin-top: 2em;
+  font-family: "Fraunces Variable", serif;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.prosa h2 {
+  font-size: 2rem;
+}
+.prosa h3 {
+  font-size: 1.5rem;
+}
+.prosa blockquote {
+  margin: 2em 0;
+  border-left: 4px solid #008e5c;
+  padding-left: 1.5rem;
+  font-family: "Fraunces Variable", serif;
+  font-size: 1.6rem;
+  font-style: italic;
+  line-height: 1.4;
+}
+.prosa blockquote p {
+  font-size: inherit;
+  color: inherit;
+}
+.prosa a {
+  color: #007c54;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.prosa ul,
+.prosa ol {
+  padding-left: 1.5rem;
+}
+.prosa ul {
+  list-style: disc;
+}
+.prosa ol {
+  list-style: decimal;
+}
+.prosa img {
+  border-radius: 1rem;
+}
+
 /* Cinta infinita */
 @keyframes marquee {
   to {

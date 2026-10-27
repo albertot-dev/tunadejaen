@@ -1,0 +1,28 @@
+---
+import Encabezado from "@/components/Encabezado.astro";
+import type { Bloque } from "@/lib/strapi";
+
+type Props = Extract<Bloque, { __component: "bloques.video" }>;
+
+const { titulo, url } = Astro.props;
+// Admite enlaces de YouTube normales, cortos (youtu.be), embed y shorts
+const id = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/)?.[1];
+---
+
+{
+  id && (
+    <section class="mx-auto max-w-5xl px-4 py-24 lg:px-8">
+      <Encabezado titulo={titulo} />
+      <div class:list={["aspect-video overflow-hidden rounded-3xl bg-ink shadow-xl", titulo && "mt-10"]} data-reveal="zoom">
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${id}`}
+          title={titulo ?? "Vídeo de YouTube"}
+          class="h-full w-full"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        />
+      </div>
+    </section>
+  )
+}

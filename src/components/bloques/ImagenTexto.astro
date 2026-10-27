@@ -1,0 +1,69 @@
+---
+import { Image } from "astro:assets";
+import Encabezado from "@/components/Encabezado.astro";
+import RichText from "@/components/RichText.astro";
+import { imagen as props, type Bloque } from "@/lib/strapi";
+
+type Props = Extract<Bloque, { __component: "bloques.imagen-texto" }>;
+
+const { antetitulo, titulo, contenido, imagen, pieDeFoto, imagenALaDerecha, enlace } = Astro.props;
+
+// Los PNG suelen ser ilustraciones con fondo transparente: van sobre la forma verde
+const ilustracion = imagen?.mime === "image/png";
+const ladoImagen = imagenALaDerecha ? "right" : "left";
+const ladoTexto = imagenALaDerecha ? "left" : "right";
+---
+
+<section class="mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-32">
+  <div class:list={["grid items-center gap-12 lg:gap-20", imagen && "lg:grid-cols-2"]}>
+    {
+      imagen &&
+        (ilustracion ? (
+          <div class:list={["relative mx-auto w-full max-w-md", imagenALaDerecha && "lg:order-2"]} data-reveal={ladoImagen}>
+            <div
+              class="absolute inset-x-0 bottom-0 top-16 rounded-md bg-primary-600"
+              style="clip-path: polygon(20% 0, 80% 0, 100% 60%, 0% 100%);"
+            />
+            <Image
+              {...props(imagen)}
+              alt={imagen.alternativeText ?? ""}
+              class="relative z-10 h-auto w-full mix-blend-multiply"
+              widths={[400, 800]}
+              sizes="(min-width: 1024px) 28rem, 90vw"
+            />
+          </div>
+        ) : (
+          <figure class:list={["relative", imagenALaDerecha && "lg:order-2"]} data-reveal="zoom">
+            <Image
+              {...props(imagen)}
+              alt={imagen.alternativeText ?? ""}
+              class="aspect-[4/3] w-full rounded-3xl object-cover shadow-2xl"
+              widths={[600, 1000, 1400]}
+              sizes="(min-width: 1024px) 40vw, 92vw"
+            />
+            {pieDeFoto && (
+              <figcaption class="absolute -bottom-5 left-6 rounded-full bg-ink px-5 py-2 text-sm text-white shadow-lg">
+                {pieDeFoto}
+              </figcaption>
+            )}
+          </figure>
+        ))
+    }
+    <div data-reveal={ladoTexto}>
+      <Encabezado antetitulo={antetitulo} titulo={titulo} class="" />
+      <RichText contenido={contenido} class="prosa mt-6" />
+      {
+        enlace && (
+          <a
+            href={enlace.url}
+            target={enlace.nuevaPestana ? "_blank" : undefined}
+            rel={enlace.nuevaPestana ? "noopener" : undefined}
+            class="mt-8 inline-flex items-center gap-2 font-semibold text-primary-700 underline-offset-4 hover:underline"
+          >
+            {enlace.texto} <span aria-hidden="true">→</span>
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>

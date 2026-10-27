@@ -1,17 +1,24 @@
 ---
 import { Image } from "astro:assets";
-import headerImage from "@/assets/header-3.jpg";
-import { contactos, email, formatPhone } from "@/data/contacto";
+import { formatPhone, getAjustes, getContacto, getInicio, imagen, whatsappUrl } from "@/lib/strapi";
+
+const [ajustes, contacto, inicio] = await Promise.all([getAjustes(), getContacto(), getInicio()]);
+const foto = inicio?.portada?.imagen;
+const personas = contacto?.personas ?? [];
 ---
 
 <div id="en-construccion" class="relative isolate min-h-[100svh] flex-col overflow-hidden bg-ink text-white">
-  <Image
-    src={headerImage}
-    alt=""
-    class="construccion-foto absolute inset-0 -z-20 h-full w-full object-cover opacity-30 blur-[2px]"
-    widths={[800, 1400]}
-    sizes="100vw"
-  />
+  {
+    foto && (
+      <Image
+        {...imagen(foto)}
+        alt=""
+        class="construccion-foto absolute inset-0 -z-20 h-full w-full object-cover opacity-30 blur-[2px]"
+        widths={[800, 1400]}
+        sizes="100vw"
+      />
+    )
+  }
   <div class="absolute inset-0 -z-10 bg-gradient-to-b from-ink/70 via-ink/80 to-ink"></div>
 
   <main class="mx-auto flex w-full max-w-5xl grow flex-col items-center justify-center px-4 pb-10 pt-16 text-center">
@@ -22,7 +29,7 @@ import { contactos, email, formatPhone } from "@/data/contacto";
       style="--i: 0"
     />
     <p class="construccion-in mt-8 font-display text-lg italic text-primary-400 sm:text-xl" style="--i: 1">
-      la muy ilustre e andariega Tuna de Jaén
+      {[ajustes?.lema, ajustes?.nombreCorto].filter(Boolean).join(" ")}
     </p>
     <h1
       class="construccion-in mt-4 text-balance font-display text-4xl font-bold leading-tight sm:text-6xl lg:text-7xl"
@@ -37,21 +44,23 @@ import { contactos, email, formatPhone } from "@/data/contacto";
 
     <ul class="construccion-in mt-10 grid w-full max-w-3xl gap-3 sm:grid-cols-3" style="--i: 4">
       {
-        contactos.map((contacto) => (
+        personas.map((persona) => (
           <li class="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-            <p class="font-semibold">{contacto.name}</p>
-            <p class="mt-1 tabular-nums text-white/70">{formatPhone(contacto.phone)}</p>
+            <p class="font-semibold">{persona.nombre}</p>
+            <p class="mt-1 tabular-nums text-white/70">{formatPhone(persona.telefono)}</p>
             <div class="mt-4 flex justify-center gap-2">
+              {persona.whatsapp && (
+                <a
+                  href={whatsappUrl(persona.telefono)}
+                  target="_blank"
+                  rel="noopener"
+                  class="rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold transition hover:bg-primary-500"
+                >
+                  WhatsApp
+                </a>
+              )}
               <a
-                href={`https://wa.me/34${contacto.phone}`}
-                target="_blank"
-                rel="noopener"
-                class="rounded-full bg-primary-600 px-4 py-2 text-sm font-semibold transition hover:bg-primary-500"
-              >
-                WhatsApp
-              </a>
-              <a
-                href={`tel:${contacto.phone}`}
+                href={`tel:${persona.telefono}`}
                 class="rounded-full border border-white/30 px-4 py-2 text-sm font-semibold transition hover:bg-white/10"
               >
                 Llamar
@@ -62,13 +71,17 @@ import { contactos, email, formatPhone } from "@/data/contacto";
       }
     </ul>
 
-    <a
-      href={`mailto:${email}`}
-      class="construccion-in mt-8 font-display text-xl underline decoration-white/30 underline-offset-8 transition hover:decoration-primary-400 sm:text-2xl"
-      style="--i: 5"
-    >
-      {email}
-    </a>
+    {
+      contacto && (
+        <a
+          href={`mailto:${contacto.email}`}
+          class="construccion-in mt-8 font-display text-xl underline decoration-white/30 underline-offset-8 transition hover:decoration-primary-400 sm:text-2xl"
+          style="--i: 5"
+        >
+          {contacto.email}
+        </a>
+      )
+    }
   </main>
 
   <img

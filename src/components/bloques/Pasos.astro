@@ -1,0 +1,40 @@
+---
+import Encabezado from "@/components/Encabezado.astro";
+import { getContacto, type Bloque } from "@/lib/strapi";
+
+type Props = Extract<Bloque, { __component: "bloques.pasos" }>;
+
+const { antetitulo, titulo, pasos, mostrarDireccion } = Astro.props;
+const direccion = mostrarDireccion ? (await getContacto())?.direccion : undefined;
+const junta = (...partes: (string | undefined)[]) => partes.filter(Boolean).join(" · ");
+---
+
+<section class="bg-ink text-white">
+  <div class="mx-auto grid max-w-7xl gap-16 px-4 py-24 lg:grid-cols-2 lg:px-8 lg:py-32">
+    <div data-reveal="left">
+      <Encabezado antetitulo={antetitulo} titulo={titulo} oscuro class="" />
+      {
+        direccion && (
+          <address class="mt-10 rounded-2xl border border-white/15 p-6 not-italic text-white/80">
+            <p class="font-semibold text-white">Dónde encontrarnos</p>
+            <p class="mt-2">{junta(direccion.lugar, direccion.campus)}</p>
+            <p>{junta(direccion.despacho, direccion.ciudad)}</p>
+          </address>
+        )
+      }
+    </div>
+    <ol class="space-y-10">
+      {
+        pasos.map((paso, index) => (
+          <li class="flex gap-6" data-reveal="right" style={`--delay: ${index * 150}ms`}>
+            <span class="text-outline font-display text-6xl font-bold leading-none text-primary-400">{index + 1}</span>
+            <div>
+              <h3 class="font-display text-2xl font-bold">{paso.titulo}</h3>
+              {paso.texto && <p class="mt-2 text-lg text-white/70">{paso.texto}</p>}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

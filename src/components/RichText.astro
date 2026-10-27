@@ -1,0 +1,16 @@
+---
+// Texto escrito en el editor de Strapi. Los estilos los pone quien lo usa
+// (ver la clase .prosa en global.css).
+import type { BloqueTexto } from "@/lib/rich-text";
+import { richTextHtml } from "@/lib/rich-text";
+import { STRAPI_URL } from "@/lib/strapi";
+
+interface Props {
+  contenido?: BloqueTexto[] | null;
+  class?: string;
+}
+
+const { contenido, class: className } = Astro.props;
+---
+
+<div class={className} set:html={richTextHtml(contenido, STRAPI_URL)} />
